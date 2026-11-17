@@ -1,36 +1,56 @@
 # Acme Leads
 
-A small lead-management web app for a sales team: lead list with filters, "Today's Calls" queue with
-automatic follow-up cadence, call logging, purchases and payment ledger, sales reports (XLSX/PDF export),
-marketing-channel dashboard, and admin tools (team overview, reassignment, assignment rules).
+A lightweight lead-management tool for a small sales team. The idea was simple: a salesperson opens it in the morning and sees exactly who to call today, and the system takes care of when to follow up next.
 
-## Stack
-- Python 3 standard library only (no pip dependencies): `http.server` JSON API + hand-written XLSX/PDF writers
-- Single-page vanilla JS front-end (`parts.html` + `base.html` assembled by `build.py` into `index.html`)
-- Backend is a Frappe-style CRM REST API. In demo mode an embedded SQLite emulation (`demo_store.py`) replaces it.
-- All money maths lives in `payments.py` (Decimal, unit-tested in `tests_payments.py`)
+It covers a lead list with filters, a "Today's Calls" queue with automatic follow-up timing, call logging, purchases and a payment ledger, sales reports with XLSX and PDF export, a marketing-channel dashboard, and admin tools for team overview, reassignment and assignment rules.
 
-## Run in demo mode (no external services)
+All data here is invented. It's a demo rebuild of a tool I originally worked on, redone so the code can be shown publicly.
+
+## Choices I'm happy with
+
+- **No dependencies.** The backend is plain Python 3 (`http.server`), and I wrote the XLSX and PDF writers by hand. Nothing to `pip install`.
+- **Money is handled carefully.** All payment maths lives in `payments.py` using `Decimal`, with unit tests, so totals and balances never drift through float rounding.
+- **Runs standalone.** The real app talks to a Frappe-style CRM over REST. For this repo, `demo_store.py` emulates those calls on SQLite, so you can run the whole thing with no outside services.
+- **Server-side checks.** Roles are enforced on the server (reps can't see other reps' leads or admin pages), lead status is validated against a known list, login attempts are throttled, and the session secret is random per process unless you set one.
+- **Plain front end.** A single-page vanilla JS UI, assembled from `base.html` and `parts.html` by `build.py`.
+
+## Run it
+
+```bash
+cp .env.example .env     # optional, defaults run the demo
+python3 app.py           # http://localhost:8090
 ```
-cp .env.example .env        # optional; defaults already run the demo
-python3 build.py            # optional; app.py builds index.html on first request
-python3 app.py              # http://localhost:8090
+
+The first start creates `data/demo.db` and fills it with invented leads, tasks and purchases. Reset it with `python3 seed_demo.py --reset`.
+
+Demo logins share one password, `demo1234`, and exist only for this demo:
+
+- `admin@example.com` (admin)
+- `alice@example.com`, `bob@example.com`, `carol@example.com` (sales reps)
+
+Set `SESSION_SECRET` for stable sessions, and `COOKIE_SECURE=1` if you serve it over HTTPS. All amounts are in USD.
+
+## Tests
+
+```bash
+python3 -m unittest tests_payments
 ```
-The first start creates `data/demo.db` and seeds it with invented data (`seed_demo.py`; re-seed with `python3 seed_demo.py --reset`).
 
-Demo logins (DEMO ONLY: every seeded user shares the published password `demo1234`; never use it outside a local demo):
-`admin@example.com` (admin), `alice@example.com`, `bob@example.com`, `carol@example.com` (sales reps).
-Set `SESSION_SECRET` in `.env` for stable sessions (otherwise a random secret is generated at each start) and `COOKIE_SECURE=1` when serving over HTTPS.
-All amounts are in USD.
+## Connecting a real CRM
 
-Tests: `python3 -m unittest tests_payments`
-
-## Real CRM mode
-Set `DEMO_MODE=0`, `CRM_URL`, `CRM_TOKEN` in `.env`. `jobs/followup.py` (a scheduled job creating follow-up tasks) and `tools/fix_names.py`
-(one-off data clean-up) use the same variables. Optional `SOURCE_WEBHOOK_URL` mirrors status changes to an upstream system.
+Set `DEMO_MODE=0`, `CRM_URL` and `CRM_TOKEN` in `.env`. The follow-up job in `jobs/followup.py` and the clean-up script in `tools/fix_names.py` use the same variables. If you set `SOURCE_WEBHOOK_URL`, status changes are mirrored to that endpoint. Scheduled reassignments are queued by the app but need an external scheduler to apply them, which isn't included here.
 
 ## Layout
-`app.py` server/API - `demo_store.py` + `seed_demo.py` demo backend - `payments.py`, `exporters.py` - `build.py`, `base.html`, `parts.html` UI - `mockups/` static design prototypes - `jobs/`, `tools/` ops scripts.
 
-Scheduled reassignments are queued by the app but must be applied by an external scheduler (not included).
-All data in this repository is fictional.
+```
+app.py                      HTTP server and API
+demo_store.py, seed_demo.py demo backend and invented data
+payments.py, exporters.py   money maths, XLSX/PDF output
+base.html, parts.html       UI source, built into index.html by build.py
+mockups/                    early static design prototypes
+jobs/, tools/               scheduled and one-off scripts
+```
+
+## How it was built
+
+I built this with AI-assisted development (Claude Code), then reviewed, tested and hardened it myself.
