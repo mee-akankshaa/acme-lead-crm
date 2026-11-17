@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+data/
+*.db
+*.sqlite*
+*.dump
+*.sql
+*.csv
+*.xlsx
+*.log
+credentials/
+secrets/
+rollback_*.json
+__pycache__/
+index.html

@@ -1,0 +1,1764 @@
+<!--BODY-->
+<div class="app" id="app" style="display:none">
+  <div class="scrim" onclick="toggleNav()"></div>
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">S</div><div class="name">Acme<small>LEADS</small></div></div>
+    <nav class="nav" id="nav">
+      <a data-nav="dashboard" class="active" href="#" onclick="return go('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard</a>
+      <a data-nav="leads" href="#" onclick="return go('leads',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Leads <span class="count" id="nav-leads-count">—</span></a>
+      <a data-nav="leads" href="#" onclick="return go('leads',this,'today')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Today's Calls <span class="count" id="nav-today-count">—</span></a>
+      <a data-nav="leads" href="#" onclick="return go('leads',this,'Follow Up')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+        Follow-ups <span class="count" id="nav-follow-count">—</span></a>
+      <div class="nav-label">Manage</div>
+      <a data-nav="dashboard" href="#" onclick="return go('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        Reports</a>
+      <a data-nav="admin" id="nav-admin-link" href="#" onclick="return go('admin',this)" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M12 12h.01M15 15h.01M12 18h.01M18 15h.01"/></svg>
+        Admin</a>
+      <a data-nav="marketing" id="nav-marketing-link" href="#" onclick="return go('marketing',this)" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        Marketing</a>
+    </nav>
+    <div class="side-foot"><div class="who"><div class="av" id="side-av">N</div>
+      <div><b id="side-name">User</b><span style="color:var(--sidebar-text)">Sales &middot; Acme</span></div>
+      <a href="#" onclick="return doLogout()" title="Logout" style="margin-left:auto;color:var(--sidebar-text)"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="hamb" onclick="toggleNav()" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="searchBox" placeholder="Search by name or phone…" onkeydown="if(event.key==='Enter')doSearch()"></div>
+      <div class="top-actions">
+        <button class="icon-btn" title="Refresh" onclick="refreshAll(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+        <div class="pill-user"><div class="av" id="top-av">U</div><div class="u-txt"><b id="top-name">User</b><span>Sales Manager</span></div></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section id="view-dashboard">
+        <div class="page-head"><div><h1>Dashboard</h1><p id="dash-sub">Loading…</p></div></div>
+        <div class="kpis" id="kpis"></div>
+        <div class="card chart-card" style="margin-bottom:18px">
+          <div class="chart-head"><div><h3>Lead Activity</h3><div class="sub" id="la-sub">Per-day new leads</div></div></div>
+          <div class="la-filters" id="laFilters">
+            <button class="chip la-preset active" data-r="7d">Last 7 Days</button>
+            <button class="chip la-preset" data-r="30d">Last 30 Days</button>
+            <button class="chip la-preset" data-r="month">Last Month</button>
+            <button class="chip la-preset" data-r="6m">Past 6 Months</button>
+            <button class="chip la-preset" data-r="year">Past 1 Year</button>
+            <input type="month" id="laMonth" title="Pick any month to see its data">
+          </div>
+          <div class="la-stats" id="laStats"></div>
+          <div class="la-chart-wrap">
+            <svg id="laSvg" class="la-svg"></svg>
+            <div class="la-tooltip hide" id="laTooltip"></div>
+          </div>
+        </div>
+        <div class="dash-grid">
+          <div class="card chart-card"><div class="chart-head"><div><h3>Where leads come from</h3><div class="sub">Breakdown by source</div></div></div><div class="sbar" id="sourceBars"></div></div>
+          <div class="card chart-card"><div class="chart-head"><div><h3>Brand Split</h3><div class="sub" id="brand-sub">—</div></div></div>
+            <div class="donut-wrap"><svg width="132" height="132" viewBox="0 0 132 132" id="donutSvg"></svg><div class="donut-legend" id="donutLegend"></div></div></div>
+        </div>
+        <div class="card chart-card" style="margin-bottom:18px"><div class="chart-head"><div><h3>Pipeline</h3><div class="sub">By status</div></div></div><div class="funnel" id="funnel"></div></div>
+        <div class="card chart-card"><div class="chart-head"><div><h3>Recent Leads</h3><div class="sub">Latest 6</div></div><button class="btn" onclick="go('leads',document.querySelector('[data-nav=leads]'))">View all</button></div><div class="recent" id="recentList"></div></div>
+      </section>
+
+      <!-- LEADS -->
+      <section id="view-leads" class="hide">
+        <div id="todayBanner" class="demo-note hide" style="background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span><b>Today's Calls</b> &mdash; leads whose follow-up is due today (or overdue). Auto-picked and sorted with <b>Interested first</b>, so you always know who to call next.</span></div>
+        <div class="page-head"><div><h1 id="leads-title">Leads</h1><p id="leads-sub">&nbsp;</p></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="chip-dd" id="exportBox">
+              <button class="btn" onclick="toggleExportMenu(event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg> Export <svg class="dd-car" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+              <div class="dd-menu" id="exportMenu" style="left:auto;right:0">
+                <button class="dd-item" onclick="exportLeads('xlsx',event)">Excel (.xlsx)</button>
+                <button class="dd-item" onclick="exportLeads('pdf',event)">PDF (.pdf)</button>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="openNewLead()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> New Lead</button></div></div>
+        <div class="card">
+          <div class="tabs-row" id="tabs">
+            <button class="tab active" data-f="all">All <span class="c" data-cnt="all">—</span></button>
+            <button class="tab" data-f="New">New <span class="c" data-cnt="New">—</span></button>
+            <button class="tab" data-f="Interested">Interested <span class="c" data-cnt="Interested">—</span></button>
+            <button class="tab" data-f="Follow Up">Follow Up <span class="c" data-cnt="Follow Up">—</span></button>
+            <button class="tab" data-f="Contacted">Contacted <span class="c" data-cnt="Contacted">—</span></button>
+            <button class="tab" data-f="Converted">Won <span class="c" data-cnt="Converted">—</span></button>
+            <div class="chip-dd tab-dd" id="deadEndBox"></div>
+          </div>
+          <div class="filter-bar" id="sourceFilter"><span class="fl">Source</span></div>
+          <div class="filter-bar" id="dateFilter">
+            <span class="fl">Date</span>
+            <input type="date" id="dateFrom" onchange="curPage=1;buildSourceChips();loadLeads()">
+            <span style="color:var(--muted);font-size:12px">to</span>
+            <input type="date" id="dateTo" onchange="curPage=1;buildSourceChips();loadLeads()">
+            <button class="chip chip-clear hide" id="dateClearBtn" onclick="clearDateFilter()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Clear date</button>
+            <div class="bulk-bar hide" id="bulkBar"></div>
+          </div>
+          <div class="tbl-wrap"><table><thead><tr><th>Lead</th><th>Contact</th><th>Requirement</th><th>Status</th><th></th></tr></thead>
+            <tbody id="rows"><tr><td colspan="5"><div class="empty">Loading…</div></td></tr></tbody></table></div>
+          <div class="tbl-foot"><span id="count-lbl">—</span><div class="pager hide" id="pager"></div></div>
+        </div>
+      </section>
+
+      <!-- DETAIL -->
+      <section id="view-detail" class="hide">
+        <button class="back" onclick="backToLeads()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to Leads</button>
+        <div class="detail-grid"><div class="card profile" id="d-profile"></div><div class="card panel" id="d-panel"></div></div>
+      </section>
+
+      <!-- SALES REPORT (separate page) -->
+      <section id="view-salesreport" class="hide">
+        <button class="back" onclick="return go('dashboard',document.querySelector('[data-nav=dashboard]'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to Dashboard</button>
+        <div class="page-head">
+          <div><h1>Sales Report</h1><p id="srSub">Loading…</p></div>
+          <div class="sr-tools">
+            <div class="sr-year"><label for="srYearSel">Year</label><select id="srYearSel" onchange="srSetYear(this.value)"></select></div>
+            <div class="sr-export" id="srExport"></div>
+          </div>
+        </div>
+        <div id="srBody"></div>
+      </section>
+
+      <!-- SALES REPORT: one month in full (separate page) -->
+      <section id="view-salesmonth" class="hide">
+        <button class="back" onclick="return srShow('salesreport')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to Sales Report</button>
+        <div class="page-head">
+          <div><h1 id="smTitle">Month report</h1><p id="smSub"></p></div>
+          <div class="sr-export" id="smExport"></div>
+        </div>
+        <div id="smBody"></div>
+      </section>
+
+      <!-- MARKETING (admin only) -->
+      <section id="view-marketing" class="hide">
+        <div class="page-head">
+          <div><h1>Marketing</h1><p id="mkSub">Which channel brings which leads, and what the sales team made of them</p></div>
+          <div class="sr-tools">
+            <div class="sr-year"><label for="mkPeriod">Period</label><select id="mkPeriod" onchange="mkSetPeriod(this.value)">
+              <option value="7d">Last 7 days</option><option value="30d">Last 30 days</option><option value="month">This month</option>
+              <option value="lastmonth">Last month</option><option value="all" selected>All time</option><option value="custom">Custom…</option></select></div>
+            <div class="sr-year mk-custom hide" id="mkCustom"><label>From – To</label><span><input type="date" id="mkFrom" onchange="loadMarketing()"> <input type="date" id="mkTo" onchange="loadMarketing()"></span></div>
+            <div class="sr-year"><label for="mkBrand">Brand</label><select id="mkBrand" onchange="loadMarketing()">
+              <option value="">Both brands</option><option>Acme</option><option>Acme Pro</option></select></div>
+          </div>
+        </div>
+        <div id="mkBody"></div>
+      </section>
+
+      <!-- ADMIN -->
+      <section id="view-admin" class="hide">
+        <div class="page-head"><div><h1>Admin — Team</h1><p>Each sales rep's activity, lead assignment and routing rules</p></div></div>
+        <div class="card" style="margin-bottom:18px;overflow-x:auto">
+          <table class="admin-team-table">
+            <thead><tr><th>Rep</th><th>Total</th><th>Open</th><th>Calls today</th><th>Target</th><th>Today's outcomes</th><th>Avg. first-contact</th><th></th></tr></thead>
+            <tbody id="teamRows"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr></tbody>
+          </table>
+        </div>
+        <div class="card" style="margin-bottom:18px">
+          <div class="panel-head" style="padding:16px 16px 0;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px">
+            <div><h3>Sales Summary</h3><p style="margin:2px 0 0;color:var(--muted);font-size:12.5px">Converted leads with recorded purchase details, by rep and brand</p></div>
+            <div style="display:flex;gap:8px;align-items:flex-end">
+              <div><label class="ml" style="margin:0 0 4px">From</label><input type="date" id="ssFrom" onchange="loadSalesSummary()"></div>
+              <div><label class="ml" style="margin:0 0 4px">To</label><input type="date" id="ssTo" onchange="loadSalesSummary()"></div>
+            </div>
+          </div>
+          <div style="padding:16px">
+            <div id="ssTotals" style="display:flex;gap:28px;flex-wrap:wrap;padding:4px 0 4px"></div>
+            <label class="ml" style="margin-top:14px">By rep</label>
+            <div style="overflow-x:auto"><table class="admin-team-table"><thead><tr><th>Rep</th><th>Sales</th><th>Total amount</th></tr></thead><tbody id="ssRepRows"></tbody></table></div>
+            <label class="ml" style="margin-top:18px">By brand</label>
+            <div style="overflow-x:auto"><table class="admin-team-table"><thead><tr><th>Brand</th><th>Sales</th><th>Total amount</th></tr></thead><tbody id="ssBrandRows"></tbody></table></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:18px">
+          <div class="panel-head" style="padding:16px 16px 0"><h3>Add sales user</h3></div>
+          <div class="add-user-grid" style="padding:16px">
+            <div><label class="ml">Name</label><input id="auName" placeholder="Jordan Lee"></div>
+            <div><label class="ml">Email</label><input id="auEmail" type="email" placeholder="name@example.com"></div>
+            <div><label class="ml">Password</label><input id="auPassword" type="text" placeholder="min 8 characters"></div>
+            <button class="btn btn-primary" onclick="addUser()">+ Add user</button>
+          </div>
+          <p style="padding:0 16px 14px;margin:0;color:var(--muted);font-size:12.5px">A new user is always created with the <b>Sales User</b> role — they'll only see their own leads, not admin. There's no email verification, the password is set directly here — let the team know it separately afterward.</p>
+        </div>
+        <div class="card" style="margin-bottom:18px">
+          <div class="panel-head" style="padding:16px 16px 0"><h3>Work Dashboard</h3><p style="margin:2px 0 0;color:var(--muted);font-size:12.5px">Who has how many leads, reassignment history, and what's scheduled</p></div>
+          <div style="padding:16px">
+            <label class="ml">Leads per rep</label>
+            <svg id="teamBarSvg" class="la-svg" style="height:160px"></svg>
+          </div>
+          <div style="padding:0 16px 16px">
+            <label class="ml">Scheduled reassignments</label>
+            <div id="scheduleRows" style="font-size:13px"></div>
+          </div>
+          <div style="padding:0 16px 16px">
+            <label class="ml">Reassignment history</label>
+            <div id="logRows" style="font-size:13px;max-height:260px;overflow-y:auto"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:18px">
+          <div class="panel-head" style="padding:16px 16px 0"><h3>Assignment rules</h3></div>
+          <div style="padding:16px">
+            <label class="ml">Active for auto-assignment <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— new website leads will only be load-aware round-robined among these</span></label>
+            <div id="activeUsersBox"></div>
+            <label class="ml" style="margin-top:20px">Source &rarr; fixed rep <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— e.g. Meta Lead Ads always goes to one specific rep</span></label>
+            <div id="sourceRulesBox"></div>
+            <button class="btn" style="margin-top:6px" onclick="addSourceRuleRow()">+ Add rule</button>
+            <label class="ml" style="margin-top:20px">Daily call target per rep</label>
+            <div id="targetsBox"></div>
+            <div class="modal-f" style="margin-top:20px"><button class="btn btn-primary" onclick="saveRules()">Save rules</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="float-count hide" id="floatCount"></div>
+
+<!-- CALL OUTCOME MODAL -->
+<div class="modal-scrim" id="callScrim" onclick="closeCall(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-h"><h3 id="callTitle">Call outcome</h3>
+      <button class="x" onclick="closeCall()" aria-label="Close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="modal-b">
+      <label class="ml">What happened on the call?</label>
+      <div class="outcomes" id="outcomes"></div>
+      <label class="ml">Note <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— what they said, what they need</span></label>
+      <textarea id="callNote" placeholder="e.g. Wants 2x Widget A100, needs invoice, send price by tomorrow"></textarea>
+      <label class="ml">Next call on <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— leave empty to let the system decide</span></label>
+      <input type="date" id="callDate">
+      <div class="modal-f">
+        <button class="btn" onclick="closeCall()">Cancel</button>
+        <button class="btn btn-primary" id="callSave" onclick="saveCall()">Save &amp; mark done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REASSIGN MODAL -->
+<div class="modal-scrim" id="reassignScrim" onclick="closeReassign(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-h"><h3 id="reassignTitle">Reassign leads</h3>
+      <button class="x" onclick="closeReassign()" aria-label="Close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="modal-b">
+      <p id="reassignInfo" style="color:var(--muted);font-size:13px;margin:0 0 14px"></p>
+      <label class="ml">Which leads</label>
+      <select id="reassignScope" onchange="onScopeChange()">
+        <option value="all">All (all time)</option>
+        <option value="today">Today</option>
+        <option value="7d">Last 7 days</option>
+        <option value="30d">Last 30 days</option>
+        <option value="6m">Last 6 months</option>
+        <option value="range">Custom date range</option>
+        <option value="single">A specific date</option>
+      </select>
+      <div id="reassignRangeBox" class="hide form-2col" style="margin-top:10px">
+        <div><label class="ml">From</label><input type="date" id="reassignFrom"></div>
+        <div><label class="ml">To</label><input type="date" id="reassignToDate"></div>
+      </div>
+      <div id="reassignSingleBox" class="hide" style="margin-top:10px">
+        <label class="ml">Date</label><input type="date" id="reassignSingleDate">
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;cursor:pointer">
+        <input type="checkbox" id="reassignOpenOnly" checked> Open leads only (closed/lost/won won't be touched)
+      </label>
+      <div id="reassignPreview" style="margin-top:12px;font-size:13px;color:var(--ink-2)"></div>
+      <label class="ml" style="margin-top:16px">New owner</label>
+      <select id="reassignTo"></select>
+      <label class="ml" style="margin-top:16px">When to apply</label>
+      <div style="display:flex;gap:16px;font-size:13.5px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="reassignWhen" value="now" checked onchange="onWhenChange()"> Now</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="reassignWhen" value="later" onchange="onWhenChange()"> Schedule for a future date</label>
+      </div>
+      <div id="reassignScheduleBox" class="hide" style="margin-top:10px">
+        <label class="ml">Apply on which date</label><input type="date" id="reassignScheduleDate">
+      </div>
+      <div class="modal-f">
+        <button class="btn" onclick="closeReassign()">Cancel</button>
+        <button class="btn btn-primary" id="reassignPreviewBtn" onclick="previewReassign()">Preview</button>
+        <button class="btn btn-primary hide" id="reassignConfirmBtn" onclick="confirmReassign()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW LEAD MODAL -->
+<div class="modal-scrim" id="newLeadScrim" onclick="closeNewLead(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-h"><h3>New Lead</h3>
+      <button class="x" onclick="closeNewLead()" aria-label="Close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="modal-b">
+      <label class="ml">Name</label>
+      <input type="text" id="nlName" placeholder="Contact's name">
+      <label class="ml">Phone</label>
+      <input type="tel" id="nlPhone" placeholder="Phone number">
+      <label class="ml">Email <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— optional</span></label>
+      <input type="email" id="nlEmail" placeholder="email@example.com">
+      <div class="form-2col">
+        <div><label class="ml">Brand</label>
+          <select id="nlBrand"><option>Acme</option><option>Acme Pro</option></select></div>
+        <div><label class="ml">Source</label>
+          <select id="nlSource">
+            <option value="Existing Customer" selected>Existing Customer</option>
+            <option value="Reference">Reference</option>
+            <option value="Cold Calling">Cold Calling</option>
+            <option value="Walk In">Walk In</option>
+          </select></div>
+      </div>
+      <label class="ml">City <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— optional</span></label>
+      <input type="text" id="nlCity" placeholder="e.g. Springfield">
+      <label class="ml">Product / model they want <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— optional</span></label>
+      <input type="text" id="nlModel" placeholder="e.g. Widget A100">
+      <label class="ml">Requirement <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— optional</span></label>
+      <textarea id="nlReq" placeholder="What they need, budget, any context useful to know before the call"></textarea>
+      <div id="nlErr" class="login-err hide"></div>
+      <div class="modal-f">
+        <button class="btn" onclick="closeNewLead()">Cancel</button>
+        <button class="btn btn-primary" id="nlSave" onclick="saveNewLead()">Save Lead</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PURCHASE DETAILS (shown when a lead is marked Converted, or to edit/backfill one that already is) -->
+<div class="modal-scrim" id="purchaseScrim" onclick="closePurchaseModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-h"><h3 id="pdHead">Purchase Details</h3>
+      <button class="x" onclick="closePurchaseModal()" aria-label="Close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="modal-b">
+      <p id="pdIntro" style="margin:0 0 4px;color:var(--muted);font-size:12.5px">What did this lead buy? Fill this in so the sale is on record.</p>
+      <label class="ml">Buying Date</label>
+      <input type="date" id="pdDate">
+      <label class="ml">Products</label>
+      <div id="pdItems"></div>
+      <button type="button" class="btn" style="margin-top:2px" onclick="pdAddItemRow('','','')">+ Add product</button>
+      <div class="qs-row" style="margin-top:10px;font-size:14.5px"><span>Net Total</span><b id="pdNetTotal">$0</b></div>
+      <div id="pdPaySec">
+        <label class="ml">Payment received from the client</label>
+        <div class="outcomes" style="grid-template-columns:1fr 1fr 1fr" id="pdChoice">
+          <button type="button" class="oc" data-c="full" onclick="pdChoose('full')">Full payment</button>
+          <button type="button" class="oc" data-c="advance" onclick="pdChoose('advance')">Part payment (advance)</button>
+          <button type="button" class="oc" data-c="none" onclick="pdChoose('none')">Nothing received yet</button>
+        </div>
+        <div id="pdPayFields" class="hide">
+          <div id="pdAdvBox" class="hide"><label class="ml">Amount received ($)</label>
+            <input type="number" id="pdAdvance" min="0" step="0.01" placeholder="Amount received" oninput="pdRecalcTotal()"></div>
+          <div class="form-2col" style="margin-top:2px"><div><label class="ml">Payment date</label><input type="date" id="pdPayDate"></div>
+            <div><label class="ml">Mode <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+              <select id="pdPayMethod"><option value="">-</option><option>Cash</option><option>Card</option><option>Bank transfer</option><option>Other</option></select></div></div>
+        </div>
+      </div>
+      <div id="pdLedger" class="hide"><label class="ml">Payments received <span style="font-weight:400;color:var(--muted)">- edit, remove or add</span></label>
+        <div id="pdPayRows"></div>
+        <button type="button" class="btn" style="margin-top:2px" onclick="pdAddPayRow()">+ Add payment</button></div>
+      <div class="qs-row" style="margin-top:10px;font-size:14.5px"><span>Received</span><b id="pdReceived">—</b></div>
+      <div class="qs-row" style="margin-top:4px;font-size:14.5px"><span>Balance Due</span><b id="pdBalance">—</b></div>
+      <div id="pdErr" class="login-err hide"></div>
+      <div class="modal-f">
+        <button class="btn" onclick="closePurchaseModal()">Cancel</button>
+        <button class="btn btn-primary" id="pdSave" onclick="savePurchase()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT ONE PAYMENT (ledger) -->
+<div class="modal-scrim" id="payScrim" onclick="closePayModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-h"><h3 id="payTitle">Add payment</h3>
+      <button class="x" onclick="closePayModal()" aria-label="Close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="modal-b">
+      <div class="qs-row" style="font-size:14.5px"><span>Balance due</span><b id="payBal">$0</b></div>
+      <label class="ml">Amount received ($)</label>
+      <input type="number" id="payAmt" min="0" step="0.01" placeholder="Amount">
+      <button type="button" class="btn" id="payFullBtn" style="margin-top:6px" onclick="payFillBalance()">Receive full balance</button>
+      <div class="form-2col"><div><label class="ml">Payment date</label><input type="date" id="payDate"></div>
+        <div><label class="ml">Mode <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <select id="payMethod"><option value="">-</option><option>Cash</option><option>Card</option><option>Bank transfer</option><option>Other</option></select></div></div>
+      <label class="ml">Note <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <input type="text" id="payNote" maxlength="200" placeholder="e.g. transaction ref">
+      <div id="payErr" class="login-err hide"></div>
+      <div class="modal-f">
+        <button class="btn" onclick="closePayModal()">Cancel</button>
+        <button class="btn btn-primary" id="paySave" onclick="savePayment()">Save payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="login-wrap">
+  <form class="login-card" onsubmit="return doLogin(event)">
+    <div class="login-logo">S</div>
+    <h2>Acme Leads</h2>
+    <p>Log in to your CRM account</p>
+    <label>Email</label>
+    <input id="li-user" type="text" autocomplete="username" placeholder="name@example.com" required>
+    <label>Password</label>
+    <input id="li-pass" type="password" autocomplete="current-password" placeholder="••••••••" required>
+    <div id="li-err" class="login-err hide"></div>
+    <button type="submit" class="btn btn-primary login-btn" id="li-btn">Login</button>
+  </form>
+</div>
+<!--/BODY-->
+
+<!--SCRIPT-->
+<script>
+const AV=["#2F6BFF","#16A34A","#E08600","#8B5CF6","#EC4899","#0EA5E9","#EF4444","#14B8A6"];
+const STC={New:'s-new',Contacted:'s-contacted',Interested:'s-interested','Follow Up':'s-follow','Not Available':'s-na','Not Interested':'s-lost',Junk:'s-lost',Converted:'s-won',Qualified:'s-won',Nurture:'s-contacted',Unqualified:'s-lost'};
+const PP={New:10,Contacted:35,Interested:65,'Follow Up':50,'Not Available':15,'Not Interested':0,Junk:0,Converted:100,Qualified:85,Nurture:40,Unqualified:0};
+const PC={New:'var(--accent)',Contacted:'var(--slate)',Interested:'var(--good)','Follow Up':'var(--warn)','Not Available':'var(--muted)','Not Interested':'var(--bad)',Junk:'var(--bad)',Converted:'var(--good)',Qualified:'var(--good)',Nurture:'var(--slate)',Unqualified:'var(--bad)'};
+const ALL_STATUSES=["New","Contacted","Interested","Follow Up","Not Available","Not Interested","Unqualified","Junk","Converted","Qualified","Nurture"];
+// Call-outcome buttons are generated from this SAME list as the detail-page
+// status dropdown — both must offer identical choices, whichever one is used
+// to update a lead. A few statuses get a friendlier phone-call phrasing; the rest
+// just show their plain status name.
+const OUTCOME_LABELS={"Contacted":"Contacted / spoke","Not Available":"Didn't pick up","Follow Up":"Call again later","Junk":"Junk / wrong number"};
+document.getElementById("outcomes").innerHTML=ALL_STATUSES.map(s=>`<button class="oc" data-s="${s}">${OUTCOME_LABELS[s]||s}</button>`).join("");
+let SRCS=[], SRC_COUNTS={}, SRC_TOTAL=0, WEB_BRAND_COUNTS={}, STATUS_COUNTS={}, srcFilter="all", brandFilter="all", filter="all", curLead=null;
+// dead-end = status not in the follow-up CADENCE dict (app.py) and not
+// already covered by its own tab (Converted has "Won")
+const DEAD_END_STATUSES=["Junk","Not Interested","Unqualified","Nurture","Qualified"];
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const jsq=s=>esc(JSON.stringify(String(s==null?"":s)));   // safe JS string literal inside a double-quoted onclick attribute
+const ini=n=>(n||"?").split(" ").filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+const av=i=>AV[Math.abs(i)%AV.length];
+const hashi=s=>{let h=0;for(const c of (s||""))h=(h*31+c.charCodeAt(0))|0;return h;};
+function pdate(s){if(!s)return null;const d=new Date(String(s).slice(0,19).replace(' ','T'));return isNaN(d)?null:d;}
+function fmtWhen(s){const d=pdate(s);if(!d)return'';const now=new Date();const diff=(now-d)/1000;const d0=new Date(now.getFullYear(),now.getMonth(),now.getDate());const dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());const days=Math.round((d0-dd)/86400000);if(diff<60)return'Just now';if(diff<3600)return Math.floor(diff/60)+'m ago';if(days<=0)return'Today '+d.toTimeString().slice(0,5);if(days===1)return'Yesterday';const opts={day:'2-digit',month:'short'};if(d.getFullYear()!==now.getFullYear())opts.year='numeric';return d.toLocaleDateString('en-GB',opts);}
+function fmtFull(s){const d=pdate(s);if(!d)return s||'—';return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+d.toTimeString().slice(0,5);}
+function fmtDay(s){const d=pdate(s);if(!d)return s||'';return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+const clockSvg=`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
+function statusPill(st){return `<span class="status ${STC[st]||'s-contacted'}"><span class="d"></span>${esc(st)}</span>`;}
+const PAY_LBL={paid:"Paid in full",partial:"Part paid",unpaid:"Unpaid",unknown:"Payment not recorded"};
+const PAY_TYPE={advance:"Advance",balance:"Balance",full:"Full payment",payment:"Payment"};
+function money2(n){return "$"+Number(n||0).toLocaleString("en-US",{maximumFractionDigits:2});}
+function payPill(st){return `<span class="pay-pill pp-${esc(st||"unknown")}">${esc(PAY_LBL[st]||PAY_LBL.unknown)}</span>`;}
+function onePurchaseHtml(p,n,total){
+    const pid=esc(p.id);
+    const items=(p.items||[]).map(it=>`${esc(it.product)} × ${it.qty}${it.price?` @ ${money2(it.price)}`:''}`).join("<br>");
+    const known=p.payments_known;
+    const pays=(p.payments||[]).map(x=>`<div class="pay-row"><div><b>${money2(x.amount)}</b> <span class="pay-t">${esc(PAY_TYPE[x.type]||"Payment")}</span>
+        <div class="pay-s">${esc(fmtDay(x.date))}${x.method?" · "+esc(x.method):""}${x.note?" · "+esc(x.note):""}${x.by?" · "+esc(x.by.split("@")[0]):""}${x.edited_by?" · edited":""}</div></div>
+        <div class="pay-b">${x.legacy?"":`<button class="name-edit-btn" onclick="openPayModal('${esc(x.id)}','${pid}')" title="Edit payment" aria-label="Edit payment">${pencilSvg()}</button>`}
+        <button class="name-edit-btn" onclick="deletePayment('${esc(x.id)}','${pid}')" title="Delete payment" aria-label="Delete payment">${xSvg()}</button></div></div>`).join("");
+    let money;
+    if(!known){
+      money=`<div class="qs-row"><span>Payment</span><b>${payPill("unknown")}</b></div>
+        <div style="font-size:12.5px;color:var(--muted);margin:2px 0 8px">This sale was saved before payment tracking. Record what was received.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="openPayModal(null,'${pid}')">+ Add payment</button>
+        <button class="btn" onclick="markNothingReceived('${pid}')">Nothing received yet</button></div>`;
+    }else{
+      money=`<div class="qs-row"><span>Received</span><b>${money2(p.received)}</b></div>
+        <div class="qs-row"><span>Balance Due</span><b>${p.balance>0?money2(p.balance):'<span style="color:var(--good)">Nil · paid in full ✓</span>'}</b></div>
+        <div class="qs-row"><span>Payment status</span><b>${payPill(p.payment_status)}</b></div>
+        ${pays?`<div class="pay-list">${pays}</div>`:''}
+        ${p.balance>0?`<button class="btn btn-primary full" style="margin-top:8px" onclick="openPayModal(null,'${pid}')">+ Add payment</button>`:''}`;
+    }
+    const multi=total>1;
+    const title=multi?`Purchase ${n} of ${total}${n>1?" · repeat":""}`:"Purchase Details";
+    const credit=multi&&p.credit_to?` · counts for ${esc(p.credit_to.split("@")[0])}`:"";
+    return `<div class="req-box" style="border-color:var(--good)">
+      <div class="req-box-h" style="justify-content:space-between">
+        <span>💰&nbsp;${title}</span>
+        <span style="display:flex;gap:4px">
+          <button class="name-edit-btn" onclick="openPurchaseModal('${pid}')" title="Edit purchase details" aria-label="Edit purchase details">${pencilSvg()}</button>
+          ${multi?`<button class="name-edit-btn" onclick="deletePurchase('${pid}')" title="Delete this purchase" aria-label="Delete this purchase">${xSvg()}</button>`:""}
+        </span>
+      </div>
+      <div class="qs-row"><span>Buying Date</span><b>${esc(fmtDay(p.buying_date))}</b></div>
+      <div class="qs-row"><span>Product(s)</span><b style="text-align:right">${items||'—'}</b></div>
+      <div class="qs-row"><span>Total Amount</span><b>${money2(p.total_amount)}</b></div>
+      ${money}
+      ${multi?`<div style="font-size:11.5px;color:var(--muted);margin-top:6px">Entered by ${esc((p.recorded_by||"").split("@")[0]||"—")}${credit}</div>`:""}
+    </div>`;
+}
+function purchaseCardHtml(l){
+  const list=(l.purchases||[]).slice().sort((a,b)=>String(a.buying_date||"").localeCompare(String(b.buying_date||""))||String(a.recorded_at||"").localeCompare(String(b.recorded_at||"")));
+  if(list.length){
+    // newest purchase first; numbering is oldest = 1
+    const html=list.map((p,i)=>onePurchaseHtml(p,i+1,list.length)).reverse().join("");
+    const tot=list.reduce((a,p)=>a+(p.total_amount||0),0);
+    const sum=list.length>1?`<div class="qs-row" style="margin:0 2px 8px"><span>All purchases (${list.length})</span><b>${money2(tot)}</b></div>`:"";
+    return sum+`<button class="btn full" style="margin-bottom:8px" onclick="openPurchaseModal(null,true)">+ New purchase (client bought again)</button>`+html;
+  }
+  if(l.status==="Converted"){
+    return `<div class="req-box" style="border-color:var(--warn)">
+      <div class="req-box-h">⚠️&nbsp;Purchase details missing</div>
+      <button class="btn btn-primary full" onclick="openPurchaseModal()">Add Purchase Details</button>
+    </div>`;
+  }
+  return "";
+}
+function purOf(id){const L=curLead.purchases||[];return id?L.find(p=>p.id===id):(L.length===1?L[0]:null);}
+function srcColor(s){const i=SRCS.indexOf(s);return AV[(i<0?hashi(s):i)%AV.length];}
+
+async function api(path,opts){const r=await fetch(path,opts);if(r.status===401){showLogin();throw new Error("auth");}if(!r.ok){let t=await r.text();throw new Error(t);}return r.json();}
+
+/* ---- auth ---- */
+let IS_ADMIN=false;
+async function boot(){
+  try{const me=await (await fetch("/api/me")).json();
+    if(me.user){startApp(me.user,me.admin,me.name);}else{showLogin();}
+  }catch(e){showLogin();}
+}
+function showLogin(){document.getElementById("login").style.display="flex";document.getElementById("app").style.display="none";}
+async function doLogin(e){e.preventDefault();
+  const btn=document.getElementById("li-btn");btn.disabled=true;btn.textContent="Logging in…";
+  const err=document.getElementById("li-err");err.classList.add("hide");
+  try{
+    const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({usr:document.getElementById("li-user").value.trim(),pwd:document.getElementById("li-pass").value})});
+    const d=await r.json();
+    if(d.ok){startApp(d.user,d.admin);}else{err.textContent=d.error||"Login failed";err.classList.remove("hide");}
+  }catch(x){err.textContent="Could not connect to the server";err.classList.remove("hide");}
+  btn.disabled=false;btn.textContent="Login";return false;
+}
+async function doLogout(){await fetch("/api/logout",{method:"POST"});location.reload();return false;}
+function startApp(user,admin,name){
+  IS_ADMIN=!!admin;
+  const disp=name||(()=>{const nm=(user||"").split("@")[0];return nm.charAt(0).toUpperCase()+nm.slice(1);})();
+  document.getElementById("side-name").textContent=disp;document.getElementById("top-name").textContent=disp;
+  document.getElementById("side-av").textContent=disp[0];document.getElementById("top-av").textContent=disp[0];
+  document.getElementById("nav-admin-link").style.display=IS_ADMIN?"":"none";
+  document.getElementById("nav-marketing-link").style.display=IS_ADMIN?"":"none";
+  document.getElementById("login").style.display="none";document.getElementById("app").style.display="";
+  loadDashboard();
+}
+
+/* ---- dashboard ---- */
+async function loadDashboard(){
+  let d;try{d=await api("/api/dashboard");}catch(e){return;}
+  document.getElementById("dash-sub").innerHTML=`<b style="color:var(--ink)">${d.total} total leads</b> &middot; ${d.due_today} calls due today &middot; ${d.interested} interested`;
+  const ms=d.my_sales||{count:0,total_amount:0};
+  const kp=[["Total Leads",d.total,"i-blue",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,"across all sources"],
+    ["Interested (Hot)",d.interested,"i-green",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>`,"call these first"],
+    ["Calls Due Today",d.due_today,"i-amber",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,"open Today's Calls"],
+    ["Won",d.by_status.Converted||0,"i-violet",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/><path d="m9 11 3 3L22 4"/></svg>`,"converted leads"],
+    ["This Month's Sales",money(ms.total_amount),"i-green",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,`${ms.count} sale${ms.count===1?'':'s'} this month`,`<button class="k-go" onclick="return openSalesReport(event)" title="Open the all-time Sales Report" aria-label="All Sales Report"><span>All Sales Report</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`]];
+  document.getElementById("kpis").innerHTML=kp.map(([l,n,ic,svg,sub,extra])=>`<div class="kpi${extra?' kpi-link':''}">${extra||''}<div class="k-top"><div class="k-ico ${ic}">${svg}</div><div class="k-lbl">${l}</div></div><div class="k-num">${n}</div><div class="k-sub">${sub}</div></div>`).join("");
+  // source bars
+  SRCS=d.by_source.map(s=>s[0]);
+  SRC_COUNTS=Object.fromEntries(d.by_source);
+  SRC_TOTAL=d.total;
+  WEB_BRAND_COUNTS=d.website_by_brand||{};
+  const smax=Math.max(1,...d.by_source.map(s=>s[1]));
+  document.getElementById("sourceBars").innerHTML=d.by_source.map(([k,v])=>`<div class="row"><div class="nm"><span class="dt" style="background:${srcColor(k)}"></span>${esc(k)}</div><div class="track"><div class="fill" style="width:${v/smax*100}%;background:${srcColor(k)}"></div></div><div class="vl">${v}</div></div>`).join("")||'<div style="color:var(--muted)">No data</div>';
+  buildSourceChips();
+  // pipeline
+  const pipe=[["New",d.by_status.New,"var(--accent)"],["Contacted",d.by_status.Contacted,"var(--slate)"],["Interested",d.by_status.Interested,"var(--good)"],["Follow Up",d.by_status["Follow Up"],"var(--warn)"],["Won",d.by_status.Converted,"#0E9AB0"]];
+  const fmax=Math.max(1,...pipe.map(p=>p[1]||0));
+  document.getElementById("funnel").innerHTML=pipe.map(([k,v,c])=>`<div class="fr"><div class="fl-lbl"><span class="d" style="background:${c}"></span>${k}</div><div class="fbar" style="width:${Math.max((v||0)/fmax*100,8)}%;background:${c}">${v||0}</div></div>`).join("");
+  // brand donut
+  const bt=d.by_brand.reduce((a,b)=>a+b[1],0)||1;
+  document.getElementById("brand-sub").textContent=`${d.total} leads`;
+  drawDonut(d.by_brand,bt);
+  document.getElementById("donutLegend").innerHTML=d.by_brand.map(([n,v],i)=>`<div class="li"><span class="dt" style="background:${brandColor(n,i)}"></span>${esc(n)} <b>${v}</b> <span>${Math.round(v/bt*100)}%</span></div>`).join("")+`<div class="li" style="border-top:1px solid var(--line-2);padding-top:9px"><span class="dt" style="background:var(--muted)"></span>Total <b>${d.total}</b></div>`;
+  // recent
+  try{const rc=await api("/api/leads?limit=6");document.getElementById("recentList").innerHTML=rc.leads.map((l)=>`<div class="ri" style="cursor:pointer" onclick="openLead('${l.id}')"><div class="av-lead" style="background:${av(hashi(l.id))}">${ini(l.name)}</div><div class="info"><b>${esc(l.name)}</b><span><span class="brand-tag ${l.brand==='Acme Pro'?'bt-b':'bt-a'}" style="margin-right:6px">${esc(l.brand)}</span>${esc(l.req)} &middot; ${esc(l.source)} &middot; ${esc(fmtWhen(l.created))}</span></div>${statusPill(l.status)}</div>`).join("");}catch(e){}
+  // nav counts
+  document.getElementById("nav-leads-count").textContent=d.total;
+  document.getElementById("nav-follow-count").textContent=d.by_status["Follow Up"]||0;
+  document.getElementById("nav-today-count").textContent=d.due_today;
+  // tab counts
+  const tc={all:d.total,New:d.by_status.New,Interested:d.by_status.Interested,"Follow Up":d.by_status["Follow Up"],Contacted:d.by_status.Contacted,Converted:d.by_status.Converted};
+  document.querySelectorAll("[data-cnt]").forEach(el=>{el.textContent=tc[el.dataset.cnt]??"—";});
+  STATUS_COUNTS=d.by_status;
+  buildDeadEndMenu();
+  loadLeadActivity(laActiveMonth?null:laActivePreset,laActiveMonth);
+}
+function brandColor(n,i){return n==="Acme Pro"?"var(--violet)":(n==="Acme"?"var(--accent)":AV[(i+3)%AV.length]);}
+function drawDonut(data,tot){const cx=66,cy=66,r=48,sw=20;let a=-Math.PI/2;
+  let svg=`<circle cx="66" cy="66" r="48" fill="none" stroke="var(--line-2)" stroke-width="${sw}"/>`;
+  data.forEach(([n,v],i)=>{const f=(v||0)/tot;if(f<=0)return;const a2=a+f*2*Math.PI;const x1=cx+r*Math.cos(a),y1=cy+r*Math.sin(a),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);svg+=`<path d="M ${x1} ${y1} A ${r} ${r} 0 ${f>.5?1:0} 1 ${x2} ${y2}" fill="none" stroke="${brandColor(n,i)}" stroke-width="${sw}" stroke-linecap="round"/>`;a=a2+0.04;});
+  svg+=`<text x="66" y="62" text-anchor="middle" font-size="22" font-weight="800" fill="var(--ink)" font-family="Plus Jakarta Sans">${tot}</text><text x="66" y="80" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="Plus Jakarta Sans">LEADS</text>`;
+  document.getElementById("donutSvg").innerHTML=svg;
+}
+
+/* ---- lead activity chart (dashboard) ---- */
+let laActivePreset="7d", laActiveMonth=null;
+const LA_LABELS={"7d":"Last 7 days","30d":"Last 30 days","month":"Last month","6m":"Past 6 months","year":"Past 1 year"};
+function laDateStr(d){return d.toISOString().slice(0,10);}
+function laPresetRange(preset){
+  const today=new Date();
+  let from=new Date(today), to=new Date(today);
+  if(preset==="7d"){from.setDate(from.getDate()-6);}
+  else if(preset==="30d"){from.setDate(from.getDate()-29);}
+  else if(preset==="month"){const y=today.getFullYear(),m=today.getMonth();from=new Date(y,m-1,1);to=new Date(y,m,0);}
+  else if(preset==="6m"){from.setMonth(from.getMonth()-6);from.setDate(from.getDate()+1);}
+  else if(preset==="year"){from.setFullYear(from.getFullYear()-1);from.setDate(from.getDate()+1);}
+  return [laDateStr(from),laDateStr(to)];
+}
+async function loadLeadActivity(preset,customMonth){
+  let from,to,label;
+  if(customMonth){
+    const [y,m]=customMonth.split("-").map(Number);
+    from=`${customMonth}-01`;
+    to=`${customMonth}-${String(new Date(y,m,0).getDate()).padStart(2,"0")}`;
+    label=new Date(y,m-1,1).toLocaleDateString("en-US",{month:"long",year:"numeric"});
+    laActiveMonth=customMonth;laActivePreset=null;
+  }else{
+    [from,to]=laPresetRange(preset);
+    label=LA_LABELS[preset]||preset;
+    laActivePreset=preset;laActiveMonth=null;
+  }
+  document.getElementById("la-sub").textContent=label;
+  let d;
+  try{d=await api(`/api/leads/timeseries?from=${from}&to=${to}`);}catch(e){return;}
+  renderLaStats(d);
+  renderLaChart(d.days||[]);
+}
+function renderLaStats(d){
+  const stats=[["Total",d.total,"var(--ink)"],["Acme",d.brand_a,"var(--accent)"],["Acme Pro",d.brand_b,"var(--violet)"],["Meta",d.meta,"#EC4899"],["Junk",d.junk,"var(--bad)"]];
+  document.getElementById("laStats").innerHTML=stats.map(([l,v,c])=>`<div class="la-stat"><div class="la-stat-v" style="color:${c}">${v}</div><div class="la-stat-l">${esc(l)}</div></div>`).join("");
+}
+function laNiceMax(v){
+  if(v<=5)return 5;
+  const mag=Math.pow(10,Math.floor(Math.log10(v)));
+  const norm=v/mag;
+  const step=norm<=1?1:norm<=2?2:norm<=5?5:10;
+  return step*mag;
+}
+function laFmtTick(iso){const d=new Date(iso+"T00:00:00");return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"});}
+function laFmtFull(iso){const d=new Date(iso+"T00:00:00");return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
+function renderLaChart(days){
+  const svg=document.getElementById("laSvg");
+  const W=900,H=220,padL=34,padR=10,padT=14,padB=26;
+  const innerW=W-padL-padR, innerH=H-padT-padB;
+  const n=days.length;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  if(!n){svg.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="var(--muted)" font-size="13">No data</text>`;return;}
+  const counts=days.map(d=>d[1]);
+  const maxC=Math.max(...counts);
+  const yMax=laNiceMax(maxC);
+  const x=i=>padL+(n===1?innerW/2:i/(n-1)*innerW);
+  const y=v=>padT+innerH-(v/yMax*innerH);
+  let path=`M ${x(0)} ${y(counts[0])}`;
+  for(let i=1;i<n;i++)path+=` L ${x(i)} ${y(counts[i])}`;
+  const areaPath=`${path} L ${x(n-1)} ${padT+innerH} L ${x(0)} ${padT+innerH} Z`;
+  const ticks=4;
+  let grid="";
+  for(let t=0;t<=ticks;t++){
+    const v=Math.round(yMax*t/ticks);
+    const gy=y(v);
+    grid+=`<line x1="${padL}" y1="${gy}" x2="${W-padR}" y2="${gy}" stroke="var(--line-2)" stroke-width="1"/><text x="${padL-8}" y="${gy+3.5}" text-anchor="end" font-size="10" fill="var(--muted)">${v}</text>`;
+  }
+  const labelCount=Math.min(7,n);
+  let xlabels="";
+  for(let k=0;k<labelCount;k++){
+    const idx=Math.round(k/(labelCount-1||1)*(n-1));
+    xlabels+=`<text x="${x(idx)}" y="${H-8}" text-anchor="middle" font-size="10" fill="var(--muted)">${laFmtTick(days[idx][0])}</text>`;
+  }
+  svg.innerHTML=`${grid}
+    <path d="${areaPath}" fill="var(--accent)" opacity=".1" stroke="none"/>
+    <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${xlabels}
+    <line id="laCrosshair" x1="0" y1="${padT}" x2="0" y2="${padT+innerH}" stroke="var(--ink-2)" stroke-width="1" class="hide"/>
+    <circle id="laDot" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2" class="hide"/>
+    <rect x="${padL}" y="${padT}" width="${innerW}" height="${innerH}" fill="transparent" id="laHitRect"/>`;
+  const hit=document.getElementById("laHitRect"), crosshair=document.getElementById("laCrosshair"),
+        dot=document.getElementById("laDot"), tooltip=document.getElementById("laTooltip");
+  function onMove(evt){
+    const rect=svg.getBoundingClientRect();
+    const px=(evt.clientX-rect.left)*(W/rect.width);
+    let idx=Math.round((px-padL)/innerW*(n-1));
+    idx=Math.max(0,Math.min(n-1,idx));
+    const cx=x(idx), cy=y(counts[idx]);
+    crosshair.setAttribute("x1",cx);crosshair.setAttribute("x2",cx);crosshair.classList.remove("hide");
+    dot.setAttribute("cx",cx);dot.setAttribute("cy",cy);dot.classList.remove("hide");
+    tooltip.classList.remove("hide");
+    tooltip.style.left=(cx/W*100)+"%";
+    tooltip.style.top=(cy/H*100)+"%";
+    tooltip.innerHTML=`<b>${counts[idx]}</b> lead${counts[idx]===1?'':'s'}<span>${laFmtFull(days[idx][0])}</span>`;
+  }
+  function onLeave(){crosshair.classList.add("hide");dot.classList.add("hide");tooltip.classList.add("hide");}
+  hit.addEventListener("pointermove",onMove);
+  hit.addEventListener("pointerleave",onLeave);
+}
+document.getElementById("laFilters").addEventListener("click",e=>{
+  const b=e.target.closest(".la-preset");if(!b)return;
+  document.querySelectorAll(".la-preset").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.getElementById("laMonth").value="";
+  loadLeadActivity(b.dataset.r);
+});
+document.getElementById("laMonth").addEventListener("change",e=>{
+  if(!e.target.value)return;
+  document.querySelectorAll(".la-preset").forEach(x=>x.classList.remove("active"));
+  loadLeadActivity(null,e.target.value);
+});
+
+/* ---- source chips ---- */
+// Manual-entry leads (from the New Lead form) never share one literal source
+// value the way Website leads share "Website" — they're 4 distinct real
+// CRM lead-source values. Grouped here under one "Manual" dropdown the same way
+// Website groups by brand, so they don't clutter the chip row as separate
+// one-off chips.
+const MANUAL_SOURCES=["Existing Customer","Reference","Cold Calling","Walk In"];
+function buildSourceChips(){
+  let h=`<span class="fl">Source</span><button class="chip ${srcFilter==='all'?'active':''}" data-s="all" onclick="setSrc('all',this)">All<span class="c">${SRC_TOTAL}</span></button>`;
+  SRCS.forEach(s=>{
+    if(MANUAL_SOURCES.includes(s))return; // rendered once, combined, below instead
+    const cnt=SRC_COUNTS[s]??0;
+    if(s==="Website"){
+      // Website leads come from both brands' sites — a plain source filter
+      // can't tell them apart, so this one chip gets a brand sub-menu instead
+      // of filtering directly.
+      const on=srcFilter==="Website";
+      const label=on&&brandFilter!=="all"?`Website: ${brandFilter}`:"Website";
+      // Chip shows the count for whichever slice is active — combined total
+      // by default, just that brand's count once one is picked.
+      const wCnt=on&&brandFilter!=="all"?(WEB_BRAND_COUNTS[brandFilter]??0):cnt;
+      const cntA=WEB_BRAND_COUNTS.Acme??0, cntB=WEB_BRAND_COUNTS["Acme Pro"]??0;
+      h+=`<div class="chip-dd">
+        <button class="chip ${on?'active':''}" onclick="toggleWebsiteMenu(event)"><span class="dt" style="background:${srcColor(s)}"></span>${esc(label)}<span class="c">${wCnt}</span><svg class="dd-car" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dd-menu" id="websiteMenu">
+          <button class="dd-item ${on&&brandFilter==='all'?'on':''}" onclick="pickWebsite('all',event)">All Website<span class="c">${cnt}</span></button>
+          <button class="dd-item ${on&&brandFilter==='Acme'?'on':''}" onclick="pickWebsite('Acme',event)"><span class="dt" style="background:var(--accent)"></span>Acme<span class="c">${cntA}</span></button>
+          <button class="dd-item ${on&&brandFilter==='Acme Pro'?'on':''}" onclick="pickWebsite('Acme Pro',event)"><span class="dt" style="background:var(--violet)"></span>Acme Pro<span class="c">${cntB}</span></button>
+        </div>
+      </div>`;
+    }else{
+      h+=`<button class="chip ${srcFilter===s?'active':''}" data-s="${esc(s)}" onclick="setSrc(${jsq(s)},this)"><span class="dt" style="background:${srcColor(s)}"></span>${esc(s)}<span class="c">${cnt}</span></button>`;
+    }
+  });
+  // Manual group — always rendered (not gated on SRCS/counts) so it's there
+  // for sales to use as soon as the New Lead form starts producing leads.
+  {
+    const manCounts=MANUAL_SOURCES.map(s=>SRC_COUNTS[s]??0);
+    const manTotal=manCounts.reduce((a,b)=>a+b,0);
+    const on=srcFilter==="Manual"||MANUAL_SOURCES.includes(srcFilter);
+    const label=on&&srcFilter!=="Manual"?srcFilter:"Manual";
+    const activeCnt=on&&srcFilter!=="Manual"?(SRC_COUNTS[srcFilter]??0):manTotal;
+    h+=`<div class="chip-dd">
+      <button class="chip ${on?'active':''}" onclick="toggleManualMenu(event)">${esc(label)}<span class="c">${activeCnt}</span><svg class="dd-car" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="dd-menu" id="manualMenu">
+        <button class="dd-item ${srcFilter==='Manual'?'on':''}" onclick="pickManual('Manual',event)">All Manual<span class="c">${manTotal}</span></button>
+        ${MANUAL_SOURCES.map((s,i)=>`<button class="dd-item ${srcFilter===s?'on':''}" onclick="pickManual('${s.replace(/'/g,"\\'")}',event)">${esc(s)}<span class="c">${manCounts[i]}</span></button>`).join("")}
+      </div>
+    </div>`;
+  }
+  // Clear buttons only earn their place on screen once something actually
+  // deviates from the "All" default (sales team found a
+  // permanently-visible clear button confusing/noisy).
+  const showClear=hasActiveFilters();
+  h+=`<button class="chip chip-clear${showClear?'':' hide'}" onclick="clearFilters()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Clear filters</button>`;
+  document.getElementById("sourceFilter").innerHTML=h;
+  document.getElementById("dateClearBtn")?.classList.toggle("hide",!hasDateFilter());
+}
+function hasDateFilter(){return !!document.getElementById("dateFrom").value||!!document.getElementById("dateTo").value;}
+function setSrc(s,el){srcFilter=s;brandFilter="all";curPage=1;buildSourceChips();loadLeads();}
+function toggleWebsiteMenu(e){e.stopPropagation();document.getElementById("websiteMenu").classList.toggle("show");}
+function pickWebsite(brand,e){e.stopPropagation();srcFilter="Website";brandFilter=brand;curPage=1;buildSourceChips();loadLeads();}
+document.addEventListener("click",()=>{const ex=document.getElementById("exportMenu");if(ex)ex.classList.remove("show");const m=document.getElementById("websiteMenu");if(m)m.classList.remove("show");const d=document.getElementById("deadEndMenu");if(d)d.classList.remove("show");const n=document.getElementById("manualMenu");if(n)n.classList.remove("show");});
+function toggleManualMenu(e){e.stopPropagation();document.getElementById("manualMenu").classList.toggle("show");}
+function pickManual(source,e){e.stopPropagation();srcFilter=source;brandFilter="all";curPage=1;buildSourceChips();loadLeads();}
+/* ---- export currently shown leads (all pages) as Excel / PDF ---- */
+function toggleExportMenu(e){e.stopPropagation();document.getElementById("exportMenu").classList.toggle("show");}
+function exportLeads(fmt,e){
+  e.stopPropagation();document.getElementById("exportMenu").classList.remove("show");
+  const p=new URLSearchParams();p.set("format",fmt);
+  if(filter==="today")p.set("today","1");
+  else{
+    if(filter!=="all")p.set("status",filter);if(srcFilter!=="all")p.set("source",srcFilter);if(brandFilter!=="all")p.set("brand",brandFilter);
+    const s=document.getElementById("searchBox").value.trim();if(s)p.set("q",s);
+    const df=document.getElementById("dateFrom").value;if(df)p.set("from_date",df);
+    const dt=document.getElementById("dateTo").value;if(dt)p.set("to_date",dt);
+  }
+  const a=document.createElement("a");a.href="/api/leads/export?"+p.toString();a.download="";document.body.appendChild(a);a.click();a.remove();
+}
+/* ---- dead-end status dropdown ---- */
+function buildDeadEndMenu(){
+  const box=document.getElementById("deadEndBox");
+  if(!box)return;
+  const counts=DEAD_END_STATUSES.map(s=>STATUS_COUNTS[s]??0);
+  const total=counts.reduce((a,b)=>a+b,0);
+  const active=DEAD_END_STATUSES.includes(filter);
+  const label=active?filter:"Dead End";
+  const activeCnt=active?(STATUS_COUNTS[filter]??0):total;
+  box.innerHTML=`<button class="tab dd-tab${active?' active':''}" onclick="toggleDeadEndMenu(event)">${esc(label)} <span class="c">${activeCnt}</span><svg class="dd-car" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div class="dd-menu" id="deadEndMenu">
+      ${DEAD_END_STATUSES.map((s,i)=>`<button class="dd-item ${filter===s?'on':''}" onclick="pickDeadEnd('${s.replace(/'/g,"\\'")}',event)">${esc(s)}<span class="c">${counts[i]}</span></button>`).join("")}
+    </div>`;
+}
+function toggleDeadEndMenu(e){e.stopPropagation();document.getElementById("deadEndMenu").classList.toggle("show");}
+function pickDeadEnd(status,e){
+  e.stopPropagation();
+  filter=status;srcFilter="all";brandFilter="all";curPage=1;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.getElementById("todayBanner").classList.add("hide");
+  buildDeadEndMenu();buildSourceChips();loadLeads();
+}
+function clearFilters(){filter="all";srcFilter="all";brandFilter="all";curPage=1;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.f==="all"));document.getElementById("todayBanner").classList.add("hide");document.getElementById("searchBox").value="";document.getElementById("dateFrom").value="";document.getElementById("dateTo").value="";buildDeadEndMenu();buildSourceChips();loadLeads();}
+function clearDateFilter(){document.getElementById("dateFrom").value="";document.getElementById("dateTo").value="";curPage=1;buildSourceChips();loadLeads();}
+
+/* ---- leads ---- */
+const PAGE=100; let curPage=1, lastTotal=null;
+const TODAY=new Date().toISOString().slice(0,10);
+const noteCache=new Map();
+function hasActiveFilters(){return filter!=="all"||srcFilter!=="all"||hasDateFilter();}
+async function loadLeads(){
+  const rows=document.getElementById("rows");
+  const today=(filter==="today");
+  rows.innerHTML=`<tr><td colspan="5"><div class="empty">Loading&hellip;</div></td></tr>`;
+  let data;
+  try{
+    if(today){data=await api("/api/today");}
+    else{const p=new URLSearchParams();if(filter!=="all")p.set("status",filter);if(srcFilter!=="all")p.set("source",srcFilter);if(brandFilter!=="all")p.set("brand",brandFilter);
+      const s=document.getElementById("searchBox").value.trim();if(s)p.set("q",s);
+      const df=document.getElementById("dateFrom").value;if(df)p.set("from_date",df);
+      const dt=document.getElementById("dateTo").value;if(dt)p.set("to_date",dt);
+      p.set("limit",PAGE);p.set("offset",(curPage-1)*PAGE);data=await api("/api/leads?"+p.toString());}
+  }catch(e){rows.innerHTML=`<tr><td colspan="5"><div class="empty">Error: ${esc(e.message)}</div></td></tr>`;return;}
+  const list=data.leads||[];
+  if(data.total!=null)lastTotal=data.total;
+  document.getElementById("leads-title").textContent=today?"Today's Calls":"Leads";
+  document.getElementById("leads-sub").innerHTML=today?`${list.length} leads to call today &middot; Interested first`:"&nbsp;";
+  if(!list.length){
+    rows.innerHTML=`<tr><td colspan="5"><div class="empty">No leads here &mdash; <a href="#" onclick="clearFilters();return false" style="color:var(--accent);font-weight:700">clear filters</a></div></td></tr>`;
+    document.getElementById("count-lbl").textContent="0 leads";
+    renderPager(today,0,0,false);
+    updateFloatingCount(today,0,data.total);
+    updateBulkBar(today,data.total);
+    return;
+  }
+  list.forEach(l=>noteCache.set(l.id,l.notes||[]));
+  const html=list.map(l=>{
+    const calledToday=l.last_contacted===TODAY;
+    // Today's action always shows green first, even if the outcome was a
+    // dead-end status — blue only kicks in from the next day once "today" has
+    // moved on. The hover text always keeps the last-call
+    // date visible either way, not just the closed/pending note.
+    const tickClass=calledToday?'called-today':(l.dead_end?'dead-end':'');
+    const fuTitle=(l.last_contacted?`Last call: ${fmtDay(l.last_contacted)}`:'Not called yet')+
+      (l.dead_end?` · Closed — ${esc(l.status)}, no more follow-up needed`:
+        (l.next_followup?` · Next follow-up: ${fmtDay(l.next_followup)}`:''));
+    return `
+   <tr onclick="openLead('${l.id}')">
+     <td class="td-lead"><div class="lead-cell"><div class="av-lead" style="background:${av(hashi(l.id))}">${ini(l.name)}</div>
+       <div><div class="lead-name">${esc(l.name)}</div>
+       <div class="lead-sub"><span class="brand-tag ${l.brand==='Acme Pro'?'bt-b':'bt-a'}">${esc(l.brand)}</span>${l.city?' &middot; '+esc(l.city):''} &middot; <span class="src-tag"><span class="dt" style="background:${srcColor(l.source)}"></span>${esc(l.source)}</span> &middot; <span class="when" title="${esc(fmtFull(l.created))}">${clockSvg}${esc(fmtWhen(l.created))}</span>${l.note_count?` &middot; <button class="note-badge" onclick="toggleNotes(event,'${l.id}')" title="${l.note_count} note${l.note_count===1?'':'s'} logged">${noteSvg()}${l.note_count}</button>`:''}</div></div></div></td>
+     <td data-l="Contact"><div class="contact"><div class="row mono">${l.phone?phoneSvg()+esc(l.phone):'<span style="color:var(--muted)">—</span>'}</div>${l.email?`<div class="row" style="margin-top:3px">${mailSvg()}<span class="tr">${esc(l.email)}</span></div>`:''}</div></td>
+     <td data-l="Requirement"><div class="req">${esc(l.req)}</div></td>
+     <td data-l="Status">${statusPill(l.status)}${l.next_followup?`<div class="fu-date" title="${esc(fuTitle)}">next ${esc(fmtDay(l.next_followup))}</div>`:''}</td>
+     <td data-l="" style="text-align:right;white-space:nowrap">${l.phone?`<a class="mini-call" href="tel:${esc(l.phone.replace(/\\s/g,''))}" onclick="event.stopPropagation()" title="Call">${phoneSvg()}</a> <a class="mini-call wa" href="https://wa.me/${digits(l.phone)}" target="_blank" onclick="event.stopPropagation()" title="WhatsApp">${waSvg()}</a> `:''}<button class="mini-call done${tickClass?' '+tickClass:''}" onclick="event.stopPropagation();openCall('${l.id}',${JSON.stringify(l.name).replace(/"/g,'&quot;')})" title="${esc(fuTitle)}">${tickSvg()}</button> <button class="mini-call del" onclick="event.stopPropagation();deleteLead('${l.id}',${JSON.stringify(l.name).replace(/"/g,'&quot;')})" title="Delete lead">${trashSvg()}</button></td>
+   </tr>`;}).join("");
+  rows.innerHTML=html;
+  document.getElementById("count-lbl").textContent=today?`Showing ${list.length} leads`:`Showing ${list.length} of ${lastTotal??list.length} leads`;
+  renderPager(today,list.length,lastTotal,data.has_more);
+  updateFloatingCount(today,list.length,data.total);
+  updateBulkBar(today,data.total);
+}
+function renderPager(today,countThisPage,total,hasMore){
+  const el=document.getElementById("pager");
+  if(today||!countThisPage){el.classList.add("hide");el.innerHTML="";return;}
+  el.classList.remove("hide");
+  const totalPages=total!=null?Math.max(1,Math.ceil(total/PAGE)):null;
+  const hasNext=totalPages!=null?curPage<totalPages:!!hasMore;
+  el.innerHTML=`<button class="btn btn-ghost" ${curPage<=1?'disabled':''} onclick="gotoPage(${curPage-1})">&lsaquo; Prev</button><span class="pg-lbl">Page ${curPage}${totalPages?' of '+totalPages:''}</span><button class="btn btn-ghost" ${hasNext?'':'disabled'} onclick="gotoPage(${curPage+1})">Next &rsaquo;</button>`;
+}
+function gotoPage(p){if(p<1)return;curPage=p;loadLeads();window.scrollTo(0,0);}
+function updateFloatingCount(today,countThisPage,total){
+  const el=document.getElementById("floatCount");
+  // Only earns its place once a filter narrows the list — an unfiltered
+  // view's count is already obvious from the page itself.
+  if(today||!hasActiveFilters()){el.classList.add("hide");el.innerHTML="";return;}
+  el.classList.remove("hide");
+  el.innerHTML=`<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg><b>${countThisPage}/${total??countThisPage}</b>`;
+}
+function updateBulkBar(today,total){
+  const el=document.getElementById("bulkBar");
+  // Today's Calls is a dynamic due-list, not a stored filter — bulk-delete
+  // there would delete a different set than what's on screen, so it's
+  // hidden for that view. Also hidden when total is unknown (active search,
+  // where the backend can't cheaply pre-count) rather than show a possibly
+  // stale/wrong number next to a permanent-delete button.
+  if(today||total==null){el.classList.add("hide");el.innerHTML="";return;}
+  el.classList.remove("hide");
+  el.innerHTML=`<span class="bulk-total"><b>${total}</b> lead${total===1?'':'s'}</span><button class="chip chip-danger" onclick="bulkDeleteAll(${total})">${trashSvg()}All Delete</button>`;
+}
+async function bulkDeleteAll(total){
+  if(!total){toast("No leads to delete");return;}
+  const scope=hasActiveFilters()?"the leads matching the current filter":"ALL leads in the CRM";
+  if(!confirm(`Delete ${scope} — ${total} lead${total===1?'':'s'}?\n\nThis is PERMANENT and cannot be undone from here.`))return;
+  const typed=prompt(`Type ${total} to confirm deleting ${total} lead${total===1?'':'s'} forever:`);
+  if(typed===null)return;
+  if(typed.trim()!==String(total)){toast("Number didn't match — nothing deleted");return;}
+  try{
+    const body={status:filter!=="all"?filter:"",source:srcFilter!=="all"?srcFilter:"",brand:brandFilter!=="all"?brandFilter:"",
+      from_date:document.getElementById("dateFrom").value,to_date:document.getElementById("dateTo").value,
+      q:document.getElementById("searchBox").value.trim()};
+    const r=await api("/api/leads/delete_all",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    toast(`Deleted ${r.deleted} lead${r.deleted===1?'':'s'}`);
+    curPage=1;
+    loadLeads();
+    refreshCounts();
+  }catch(e){toast("Bulk delete failed: "+e.message);}
+}
+const phoneSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+const mailSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>`;
+const pinSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+const waSvg=()=>`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m4.52 12.07c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.16 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28"/></svg>`;
+const digits=p=>{let d=(p||"").replace(/\D/g,"");if(d.length===10)d="1"+d;return d;};
+const tickSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>`;
+const trashSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z"/><path d="M10 11v6M14 11v6"/></svg>`;
+const pencilSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>`;
+const xSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
+async function deleteLead(id,name){
+  if(!confirm(`Delete lead "${name}"? This will permanently remove it from the CRM — it cannot be undone.`))return;
+  try{
+    await api("/api/lead/"+encodeURIComponent(id)+"/delete",{method:"POST"});
+    toast("Lead deleted");
+    loadLeads();
+    refreshCounts();
+  }catch(e){toast("Delete failed: "+e.message);}
+}
+const noteSvg=()=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>`;
+function toggleNotes(e,id){
+  e.stopPropagation();
+  const tr=e.target.closest("tr");
+  const existing=document.getElementById("notes-"+id);
+  if(existing){existing.remove();return;}
+  document.querySelectorAll(".note-drop").forEach(n=>n.remove());
+  const notes=noteCache.get(id)||[];
+  const body=notes.length?notes.map(n=>`<div class="note-line"><span class="note-date">${esc(fmtDay(n.date))}</span>${esc(n.text)}</div>`).join(""):
+    '<div style="color:var(--muted);padding:4px 0">No notes yet</div>';
+  tr.insertAdjacentHTML("afterend",`<tr class="note-drop" id="notes-${id}"><td colspan="5"><div class="note-panel">${body}</div></td></tr>`);
+}
+
+/* ---- call outcome ---- */
+let callLead=null, callStatus="";
+function openCall(id,name){
+  callLead=id; callStatus="";
+  document.getElementById("callTitle").textContent="Call outcome — "+name;
+  document.getElementById("callNote").value="";
+  document.getElementById("callDate").value="";
+  document.querySelectorAll("#outcomes .oc").forEach(b=>b.classList.remove("on"));
+  document.getElementById("callScrim").classList.add("show");
+  setTimeout(()=>document.getElementById("callNote").focus(),80);
+}
+function closeCall(e){if(e&&e.target!==e.currentTarget)return;document.getElementById("callScrim").classList.remove("show");}
+document.getElementById("outcomes").addEventListener("click",e=>{
+  const b=e.target.closest(".oc");if(!b)return;
+  document.querySelectorAll("#outcomes .oc").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");callStatus=b.dataset.s;
+});
+async function saveCall(){
+  if(!callStatus){toast("Choose an outcome first");return;}
+  const btn=document.getElementById("callSave");btn.disabled=true;btn.textContent="Saving…";
+  try{
+    const r=await api("/api/lead/"+encodeURIComponent(callLead)+"/called",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({status:callStatus,note:document.getElementById("callNote").value,date:document.getElementById("callDate").value})});
+    closeCall();
+    toast(r.next?("Done — next call "+r.next):"Done — no further follow-up");
+    if(!document.getElementById("view-detail").classList.contains("hide")&&curLead&&curLead.id===callLead){openLead(callLead);}
+    else{loadLeads();}
+    refreshCounts();
+  }catch(e){toast("Failed: "+e.message);}
+  btn.disabled=false;btn.textContent="Save & mark done";
+}
+/* ---- new lead (manual entry) ---- */
+function openNewLead(){
+  ["nlName","nlPhone","nlEmail","nlCity","nlModel","nlReq"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("nlBrand").value="Acme";
+  document.getElementById("nlSource").value="Existing Customer";
+  document.getElementById("nlErr").classList.add("hide");
+  document.getElementById("newLeadScrim").classList.add("show");
+}
+function closeNewLead(e){if(e&&e.target!==e.currentTarget)return;document.getElementById("newLeadScrim").classList.remove("show");}
+async function saveNewLead(){
+  const name=document.getElementById("nlName").value.trim();
+  const phone=document.getElementById("nlPhone").value.trim();
+  const err=document.getElementById("nlErr");
+  if(!name||!phone){err.textContent="Name and phone are both required";err.classList.remove("hide");return;}
+  const btn=document.getElementById("nlSave");btn.disabled=true;btn.textContent="Saving…";
+  try{
+    const r=await api("/api/leads/create",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      name,phone,
+      email:document.getElementById("nlEmail").value.trim(),
+      brand:document.getElementById("nlBrand").value,
+      source:document.getElementById("nlSource").value,
+      city:document.getElementById("nlCity").value.trim(),
+      model:document.getElementById("nlModel").value.trim(),
+      requirement:document.getElementById("nlReq").value.trim(),
+    })});
+    if(!r.ok){err.textContent=r.error||"Save failed";err.classList.remove("hide");btn.disabled=false;btn.textContent="Save Lead";return;}
+    closeNewLead();
+    toast("Lead added");
+    curPage=1;
+    loadLeads();
+    refreshCounts();
+  }catch(e){err.textContent="Failed: "+e.message;err.classList.remove("hide");}
+  btn.disabled=false;btn.textContent="Save Lead";
+}
+let pdPrevStatus=null;
+function pdAddItemRow(product,qty,price){
+  const row=document.createElement("div");
+  row.className="pd-item";
+  row.style.cssText="display:flex;gap:8px;margin-bottom:8px;align-items:center";
+  row.innerHTML=`<input type="text" class="pd-pname" placeholder="Product name" style="flex:1" value="${product?esc(product):''}">
+    <input type="number" class="pd-pqty" min="1" placeholder="Qty" style="width:64px" value="${qty||''}">
+    <input type="number" class="pd-pprice" min="0" step="1" placeholder="Price ($)" style="width:100px" value="${price||''}">
+    <button type="button" class="name-edit-btn" onclick="this.parentElement.remove();pdRecalcTotal()" aria-label="Remove product">${xSvg()}</button>`;
+  row.querySelector(".pd-pname").addEventListener("input",pdRecalcTotal);
+  row.querySelector(".pd-pqty").addEventListener("input",pdRecalcTotal);
+  row.querySelector(".pd-pprice").addEventListener("input",pdRecalcTotal);
+  document.getElementById("pdItems").appendChild(row);
+}
+let pdChoice=null,pdLedgerMode=false;
+function pdAddPayRow(x){
+  x=x||{};
+  const r=document.createElement("div");r.className="pdr";r.dataset.id=x.id||"";r.dataset.note=x.note||"";
+  r.style.cssText="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap";
+  r.innerHTML=`<input type="number" class="pdr-amt" min="0" step="0.01" placeholder="Amount ($)" style="width:100px" value="${x.amount!==undefined?esc(String(x.amount)):""}">
+    <input type="date" class="pdr-date" style="width:136px;padding:10px 8px" value="${esc((x.date||new Date().toISOString().slice(0,10)).slice(0,10))}">
+    <select class="pdr-method" style="width:100px;padding:10px 6px"><option value="">Mode</option>${["Cash","Card","Bank transfer","Other"].map(m=>`<option${x.method===m?" selected":""}>${m}</option>`).join("")}</select>
+    <button type="button" class="name-edit-btn" onclick="this.parentElement.remove();pdRecalcTotal()" aria-label="Remove payment" title="Remove payment">${xSvg()}</button>`;
+  r.querySelector(".pdr-amt").addEventListener("input",pdRecalcTotal);
+  document.getElementById("pdPayRows").appendChild(r);
+  pdRecalcTotal();
+}
+function pdChoose(c){
+  pdChoice=c;
+  document.querySelectorAll("#pdChoice .oc").forEach(b=>b.classList.toggle("on",b.dataset.c===c));
+  document.getElementById("pdPayFields").classList.toggle("hide",c==="none"||!c);
+  document.getElementById("pdAdvBox").classList.toggle("hide",c!=="advance");
+  pdRecalcTotal();
+}
+function pdRecalcTotal(){
+  const _e=document.getElementById("pdErr");if(_e)_e.classList.add("hide");   // a stale message must not outlive the input that caused it
+  let total=0;
+  document.querySelectorAll("#pdItems .pd-item").forEach(row=>{
+    const name=row.querySelector(".pd-pname").value.trim();
+    const qty=parseFloat(row.querySelector(".pd-pqty").value)||0;
+    const price=parseFloat(row.querySelector(".pd-pprice").value)||0;
+    if(name&&qty>0&&price>0)total+=qty*price;
+  });
+  total=Math.round(total*100)/100;
+  document.getElementById("pdNetTotal").textContent=money2(total);
+  // display only: the server recomputes the total, every payment and the balance on save
+  let rec=null;
+  if(pdLedgerMode){rec=0;document.querySelectorAll("#pdPayRows .pdr").forEach(r=>{rec+=parseFloat(r.querySelector(".pdr-amt").value)||0;});rec=Math.round(rec*100)/100;}
+  else if(pdChoice==="full")rec=total;
+  else if(pdChoice==="none")rec=0;
+  else if(pdChoice==="advance"){const a=parseFloat(document.getElementById("pdAdvance").value);rec=isNaN(a)?null:a;}
+  document.getElementById("pdReceived").textContent=rec===null?"—":money2(rec);
+  const bal=document.getElementById("pdBalance");
+  if(rec===null)bal.textContent="—";
+  else if(rec>total+0.001){bal.textContent="Received is more than the total";}
+  else bal.innerHTML=(total-rec)<0.005?'<span style="color:var(--good)">Nil · paid in full ✓</span>':money2(total-rec);
+  return total;
+}
+let curPid=null,pdNew=false;
+function openPurchaseModal(pid,isNew){
+  pdPrevStatus=curLead.status;
+  document.getElementById("pdItems").innerHTML="";
+  const L=curLead.purchases||[];
+  pdNew=!!isNew;
+  // edit a given purchase; "new" = repeat sale; no argument = the only/latest purchase, or the first one
+  const existing=pdNew?null:(pid?L.find(p=>p.id===pid):(L.length?L[L.length-1]:null))||null;
+  curPid=existing?existing.id:null;
+  document.getElementById("pdHead").textContent=pdNew?"New purchase (repeat sale)":(L.length>1&&existing?"Edit purchase":"Purchase Details");
+  document.getElementById("pdIntro").textContent=pdNew?"This client bought again. Add the new order here - the earlier purchase stays as it is.":"What did this lead buy? Fill this in so the sale is on record.";
+  const ledger=!!(existing&&existing.payments_known);      // payments already recorded: edit them on the card, not here
+  pdChoice=null;
+  document.querySelectorAll("#pdChoice .oc").forEach(b=>b.classList.remove("on"));
+  document.getElementById("pdPayFields").classList.add("hide");
+  document.getElementById("pdAdvBox").classList.add("hide");
+  document.getElementById("pdAdvance").value="";
+  document.getElementById("pdPayDate").value=new Date().toISOString().slice(0,10);
+  document.getElementById("pdPayMethod").value="";
+  pdLedgerMode=ledger;
+  document.getElementById("pdPaySec").classList.toggle("hide",ledger);
+  document.getElementById("pdLedger").classList.toggle("hide",!ledger);
+  document.getElementById("pdPayRows").innerHTML="";
+  if(existing){
+    document.getElementById("pdDate").value=(existing.buying_date||"").slice(0,10);
+    (existing.items||[]).forEach(it=>pdAddItemRow(it.product,it.qty,it.price));
+    if(ledger)(existing.payments||[]).forEach(x=>pdAddPayRow(x));
+  }else{
+    document.getElementById("pdDate").value=new Date().toISOString().slice(0,10);
+  }
+  if(!document.getElementById("pdItems").children.length)pdAddItemRow("","","");
+  pdRecalcTotal();
+  document.getElementById("pdErr").classList.add("hide");
+  const btn=document.getElementById("pdSave");btn.disabled=false;btn.textContent="Save";
+  document.getElementById("purchaseScrim").classList.add("show");
+}
+function closePurchaseModal(e){
+  if(e&&e.target!==e.currentTarget)return;
+  document.getElementById("purchaseScrim").classList.remove("show");
+  // status select only actually changes once purchase details are saved — revert
+  // the dropdown if the popup gets cancelled so it doesn't show "Converted" for a
+  // status change that never happened.
+  const sel=document.getElementById("statusSel");
+  if(sel&&pdPrevStatus)sel.value=pdPrevStatus;
+}
+async function savePurchase(){
+  const date=document.getElementById("pdDate").value;
+  const items=[...document.querySelectorAll("#pdItems .pd-item")].map(row=>({
+    product:row.querySelector(".pd-pname").value.trim(),
+    qty:parseInt(row.querySelector(".pd-pqty").value,10),
+    price:parseFloat(row.querySelector(".pd-pprice").value)})).filter(it=>it.product&&it.qty>0&&it.price>0);
+  const total=pdRecalcTotal();
+  const err=document.getElementById("pdErr");
+  const fail=m=>{err.textContent=m;err.classList.remove("hide");};
+  if(!date||!items.length||!(total>0))return fail("Buying date, and at least one product with quantity and price, are all required");
+  const ledger=pdLedgerMode;
+  let pay=null,payRows=null;
+  if(ledger){
+    payRows=[...document.querySelectorAll("#pdPayRows .pdr")].map(r=>({id:r.dataset.id||undefined,amount:parseFloat(r.querySelector(".pdr-amt").value),date:r.querySelector(".pdr-date").value,method:r.querySelector(".pdr-method").value,note:r.dataset.note||""}));
+    if(payRows.some(x=>isNaN(x.amount)||x.amount<=0))return fail("Every payment needs an amount more than 0 (use the ✕ to remove a payment)");
+    const sum=Math.round(payRows.reduce((a,x)=>a+x.amount,0)*100)/100;
+    if(sum>total+0.001)return fail("Payments received ("+money2(sum)+") cannot be more than the net total ("+money2(total)+")");
+  }else{
+    if(!pdChoice)return fail("Choose the payment received: full payment, part payment (advance), or nothing received yet");
+    pay={choice:pdChoice,date:document.getElementById("pdPayDate").value,method:document.getElementById("pdPayMethod").value};
+    if(pdChoice==="advance"){
+      const a=parseFloat(document.getElementById("pdAdvance").value);
+      if(isNaN(a)||a<=0)return fail("Enter the amount received (more than 0), or choose 'Nothing received yet'");
+      if(a>total+0.001)return fail("Amount received cannot be more than the net total ("+money2(total)+")");
+      pay.amount=a;
+    }
+  }
+  const btn=document.getElementById("pdSave");btn.disabled=true;btn.textContent="Saving…";
+  try{
+    const r=await api("/api/lead/"+encodeURIComponent(curLead.id)+"/purchase",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({buying_date:date,items,pay,payments:payRows,set_status:curLead.status!=="Converted",purchase_id:curPid||undefined,new_purchase:pdNew||undefined})});
+    if(!r.ok){fail(r.error||"Save failed");btn.disabled=false;btn.textContent="Save";return;}
+    document.getElementById("purchaseScrim").classList.remove("show");
+    curLead.status="Converted";pdPrevStatus=null;
+    toast("Purchase details saved");
+    openLead(curLead.id);
+    refreshCounts();
+  }catch(e){fail("Failed: "+e.message);btn.disabled=false;btn.textContent="Save";}
+}
+/* ---- payments on the lead card (ledger) ---- */
+let payEditId=null;
+function openPayModal(pid,purchaseId){
+  curPid=purchaseId||null;
+  const p=purOf(curPid);if(!p)return;
+  curPid=p.id;
+  payEditId=pid||null;
+  const x=pid?(p.payments||[]).find(y=>y.id===pid):null;
+  document.getElementById("payTitle").textContent=x?"Edit payment":"Add payment";
+  document.getElementById("payBal").textContent=p.payments_known?(p.balance>0?money2(p.balance):"Nil"):money2(p.total_amount);
+  document.getElementById("payAmt").value=x?x.amount:"";
+  document.getElementById("payDate").value=x?(x.date||"").slice(0,10):new Date().toISOString().slice(0,10);
+  document.getElementById("payMethod").value=x?(x.method||""):"";
+  document.getElementById("payNote").value=x?(x.note||""):"";
+  document.getElementById("payFullBtn").classList.toggle("hide",!!x);
+  document.getElementById("payErr").classList.add("hide");
+  const btn=document.getElementById("paySave");btn.disabled=false;btn.textContent="Save payment";
+  document.getElementById("payScrim").classList.add("show");
+}
+function closePayModal(e){if(e&&e.target!==e.currentTarget)return;document.getElementById("payScrim").classList.remove("show");}
+function payFillBalance(){const p=purOf(curPid);document.getElementById("payAmt").value=p.payments_known?p.balance:p.total_amount;}
+async function savePayment(){
+  const err=document.getElementById("payErr");
+  const fail=m=>{err.textContent=m;err.classList.remove("hide");};
+  const amount=parseFloat(document.getElementById("payAmt").value);
+  if(isNaN(amount)||amount<=0)return fail("Enter the amount received (more than 0)");
+  const body={action:payEditId?"edit":"add",purchase_id:curPid,payment_id:payEditId,amount,date:document.getElementById("payDate").value,
+    method:document.getElementById("payMethod").value,note:document.getElementById("payNote").value.trim()};
+  const btn=document.getElementById("paySave");btn.disabled=true;btn.textContent="Saving…";
+  try{
+    const r=await api("/api/lead/"+encodeURIComponent(curLead.id)+"/payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!r.ok){fail(r.error||"Save failed");btn.disabled=false;btn.textContent="Save payment";return;}
+    closePayModal();toast(payEditId?"Payment updated":"Payment added");openLead(curLead.id);
+  }catch(e){fail("Failed: "+e.message);btn.disabled=false;btn.textContent="Save payment";}
+}
+async function deletePayment(pid,purchaseId){
+  const p=purOf(purchaseId);if(!p)return;
+  const x=(p.payments||[]).find(y=>y.id===pid);if(!x)return;
+  if(!confirm("Delete this payment of "+money2(x.amount)+" ("+fmtDay(x.date)+")? The balance due will go back up. This is logged."))return;
+  try{
+    const r=await api("/api/lead/"+encodeURIComponent(curLead.id)+"/payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"delete",purchase_id:p.id,payment_id:pid})});
+    if(!r.ok){toast(r.error||"Delete failed");return;}
+    toast("Payment deleted");openLead(curLead.id);
+  }catch(e){toast("Failed: "+e.message);}
+}
+async function deletePurchase(pid){
+  const p=purOf(pid);if(!p)return;
+  if(!confirm("Delete this purchase of "+money2(p.total_amount)+" ("+fmtDay(p.buying_date)+") with all its payments? Use this only for a wrong entry. It is logged."))return;
+  try{
+    const r=await api("/api/lead/"+encodeURIComponent(curLead.id)+"/purchase-delete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({purchase_id:pid})});
+    if(!r.ok){toast(r.error||"Delete failed");return;}
+    toast("Purchase deleted");openLead(curLead.id);
+  }catch(e){toast("Failed: "+e.message);}
+}
+async function markNothingReceived(pid){
+  const p=purOf(pid);if(!p)return;
+  try{
+    const r=await api("/api/lead/"+encodeURIComponent(curLead.id)+"/purchase",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({buying_date:p.buying_date,items:p.items,pay:{choice:"none"},set_status:false,purchase_id:p.id})});
+    if(!r.ok){toast(r.error||"Failed");return;}
+    toast("Marked: nothing received yet");openLead(curLead.id);
+  }catch(e){toast("Failed: "+e.message);}
+}
+async function refreshCounts(){try{const d=await api("/api/dashboard");
+  document.getElementById("nav-today-count").textContent=d.due_today;
+  document.getElementById("nav-follow-count").textContent=d.by_status["Follow Up"]||0;
+  const tc={all:d.total,New:d.by_status.New,Interested:d.by_status.Interested,"Follow Up":d.by_status["Follow Up"],Contacted:d.by_status.Contacted,Converted:d.by_status.Converted};
+  document.querySelectorAll("[data-cnt]").forEach(el=>{el.textContent=tc[el.dataset.cnt]??"—";});
+  SRC_COUNTS=Object.fromEntries(d.by_source);
+  SRC_TOTAL=d.total;
+  WEB_BRAND_COUNTS=d.website_by_brand||{};
+  STATUS_COUNTS=d.by_status;
+  buildDeadEndMenu();
+  buildSourceChips();}catch(e){}}
+
+/* ---- detail ---- */
+let leadsScrollY=0;
+async function openLead(id){
+  if(!document.getElementById("view-leads").classList.contains("hide"))leadsScrollY=window.scrollY;
+  go("detail");
+  document.getElementById("d-profile").innerHTML='<div style="padding:40px;text-align:center;color:var(--muted)">Loading…</div>';
+  document.getElementById("d-panel").innerHTML="";
+  let l;try{l=await api("/api/lead/"+encodeURIComponent(id));}catch(e){document.getElementById("d-profile").innerHTML=`<div style="padding:20px;color:var(--bad)">Error: ${esc(e.message)}</div>`;return;}
+  curLead=l;const i=hashi(l.id);
+  document.getElementById("d-profile").innerHTML=`
+    <div class="av-big" style="background:${av(i)}">${ini(l.name)}</div>
+    <div class="name-wrap" id="nameWrap"><h2 id="nameText">${esc(l.name)}</h2><button class="name-edit-btn" onclick="startEditName()" title="Edit name" aria-label="Edit name">${pencilSvg()}</button></div>
+    <div class="p-sub"><span class="brand-tag ${l.brand==='Acme Pro'?'bt-b':'bt-a'}">${esc(l.brand)}</span>${l.city?' &middot; '+esc(l.city):''} &middot; ${esc(l.source)}</div>
+    <div style="margin-top:12px">${statusPill(l.status)}</div>
+    <div class="p-contact">
+      <div class="ef-row" id="phoneWrap"><span class="mono ef-text">${phoneSvg()}<span id="phoneText">${l.phone?esc(l.phone):'—'}</span></span><button class="name-edit-btn" onclick="startEditField('phone')" title="Edit phone" aria-label="Edit phone">${pencilSvg()}</button></div>
+      <div class="ef-row" id="emailWrap"><span class="ef-text">${mailSvg()}<span id="emailText">${l.email?esc(l.email):'—'}</span></span><button class="name-edit-btn" onclick="startEditField('email')" title="Edit email" aria-label="Edit email">${pencilSvg()}</button></div>
+      <div class="ef-row" id="cityWrap"><span class="ef-text">${pinSvg()}<span id="cityText">${l.city?esc(l.city):'—'}</span></span><button class="name-edit-btn" onclick="startEditField('city')" title="Edit city" aria-label="Edit city">${pencilSvg()}</button></div>
+    </div>
+    <div class="act-btns">
+      ${l.phone?`<a class="btn a-call" href="tel:${esc(l.phone.replace(/\\s/g,''))}">${phoneSvg()} Call</a>
+      <a class="btn a-wa" href="https://wa.me/${digits(l.phone)}" target="_blank">${waSvg()} WhatsApp</a>`:'<div></div><div></div>'}
+      <button class="btn btn-primary full" onclick="openCall('${l.id}',${JSON.stringify(l.name).replace(/"/g,'&quot;')})">${tickSvg()} Log call outcome</button>
+      <select class="btn full" id="statusSel" onchange="changeStatus(this.value)" style="appearance:auto">
+        ${ALL_STATUSES.map(s=>`<option ${s===l.status?'selected':''}>${s}</option>`).join("")}
+      </select></div>
+    <div class="qstats"><div class="qs-h">Details</div>
+      <div class="qs-row"><span>Requirement</span><b style="text-align:right;max-width:170px">${esc(l.req)}</b></div>
+      <div class="qs-row"><span>Source</span><b>${esc(l.source)}</b></div>
+      ${l.referral?`<div class="qs-row"><span>Heard about us via</span><b style="text-align:right;max-width:170px">${esc(l.referral)}</b></div>`:''}
+      <div class="qs-row"><span>Owner</span><b>${esc((l.owner||'').split('@')[0]||'—')}</b></div>
+      <div class="qs-row"><span>Received</span><b>${esc(fmtFull(l.created))}</b></div></div>`;
+  document.getElementById("d-panel").innerHTML=`
+    ${purchaseCardHtml(l)}
+    <div class="req-box">
+      <div class="req-box-h"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Requirement / Enquiry</div>
+      <div class="req-full">${esc(l.requirement_full||l.req||"—")}</div>
+    </div>
+    <div class="panel-head"><h3>Activity Timeline</h3></div>
+    <div class="timeline">${(l.timeline||[]).map(t=>`<div class="tl-item ${t.kind==='note'?'g':t.kind==='task'?'a':''}"><div class="dot"></div><h4>${esc(t.title)}</h4><p>${esc(t.sub)}</p><time>${esc(t.time)}</time></div>`).join("")||'<p style="color:var(--muted)">No activity yet</p>'}</div>
+    <div class="section-t">Quick Actions</div>
+    <div class="qa">
+      <label class="btn" style="cursor:pointer">Schedule Follow-up <input type="date" id="fuDate" onchange="scheduleFu(this.value)" style="border:none;background:none;font-family:inherit;color:var(--ink);margin-left:6px"></label>
+    </div>
+    <div class="note-box"><textarea id="noteBox" placeholder="Write a note after the call… (e.g. 'Said yes for 2 units, needs invoice, send price tomorrow')"></textarea>
+      <div class="nb-foot"><button class="btn btn-primary" onclick="saveNote()">Save Note</button></div></div>`;
+}
+async function changeStatus(st){
+  if(st==="Converted"){openPurchaseModal();return;}
+  try{const r=await api("/api/lead/"+encodeURIComponent(curLead.id)+"/status",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:st})});curLead.status=st;toast(r.next?("Status updated — next call "+r.next):"Status updated");openLead(curLead.id);refreshCounts();}catch(e){toast("Failed: "+e.message);}
+}
+async function saveNote(){const t=document.getElementById("noteBox").value.trim();if(!t)return;try{await api("/api/lead/"+encodeURIComponent(curLead.id)+"/note",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:t})});document.getElementById("noteBox").value="";toast("Note saved");openLead(curLead.id);}catch(e){toast("Failed: "+e.message);}}
+async function scheduleFu(date){if(!date)return;try{await api("/api/lead/"+encodeURIComponent(curLead.id)+"/followup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({date})});toast("Follow-up set for "+date);openLead(curLead.id);}catch(e){toast("Failed: "+e.message);}}
+function startEditName(){
+  const wrap=document.getElementById("nameWrap");
+  wrap.innerHTML=`<input id="nameInput" class="name-input" value="${esc(curLead.name)}" maxlength="140">
+    <button class="name-save-btn" onclick="saveEditName()" title="Save" aria-label="Save">${tickSvg()}</button>
+    <button class="name-cancel-btn" onclick="openLead(curLead.id)" title="Cancel" aria-label="Cancel">${xSvg()}</button>`;
+  const inp=document.getElementById("nameInput");
+  inp.focus();inp.select();
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();saveEditName();}if(e.key==="Escape")openLead(curLead.id);});
+}
+async function saveEditName(){
+  const val=document.getElementById("nameInput").value.trim();
+  if(!val){toast("Name cannot be empty");return;}
+  if(val===curLead.name){openLead(curLead.id);return;}
+  try{
+    await api("/api/lead/"+encodeURIComponent(curLead.id)+"/name",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:val})});
+    curLead.name=val;
+    toast("Name updated");
+    openLead(curLead.id);
+  }catch(e){toast("Failed: "+e.message);}
+}
+// Sales-editable contact fields — customer says their number/email/city
+// changed, correct it right here instead of leaving it stale.
+const EDIT_FIELD_CFG={
+  phone:{wrap:"phoneWrap",label:"Phone number",type:"tel"},
+  email:{wrap:"emailWrap",label:"Email",type:"email"},
+  city:{wrap:"cityWrap",label:"City",type:"text"},
+};
+function startEditField(key){
+  const cfg=EDIT_FIELD_CFG[key];
+  const wrap=document.getElementById(cfg.wrap);
+  const cur=curLead[key]||"";
+  wrap.innerHTML=`<input id="efInput_${key}" class="ef-input" type="${cfg.type}" value="${esc(cur)}" placeholder="${cfg.label}">
+    <button class="name-save-btn" onclick="saveEditField('${key}')" title="Save" aria-label="Save">${tickSvg()}</button>
+    <button class="name-cancel-btn" onclick="openLead(curLead.id)" title="Cancel" aria-label="Cancel">${xSvg()}</button>`;
+  const inp=document.getElementById(`efInput_${key}`);
+  inp.focus();inp.select();
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();saveEditField(key);}if(e.key==="Escape")openLead(curLead.id);});
+}
+async function saveEditField(key){
+  const cfg=EDIT_FIELD_CFG[key];
+  const val=document.getElementById(`efInput_${key}`).value.trim();
+  if(key==="phone"&&!val){toast("Phone number can't be empty");return;}
+  if(val===(curLead[key]||"")){openLead(curLead.id);return;}
+  try{
+    const r=await api("/api/lead/"+encodeURIComponent(curLead.id)+"/field",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({field:key,value:val})});
+    if(!r.ok){toast(r.error||"Save failed");return;}
+    curLead[key]=val;
+    toast(cfg.label+" updated");
+    openLead(curLead.id);
+    refreshCounts();
+  }catch(e){toast("Failed: "+e.message);}
+}
+
+/* ---- admin ---- */
+let RULES_CACHE=null, REASSIGN_FROM=null, REASSIGN_PREVIEW_IDS=null;
+const DEAD_END=["Converted","Junk","Not Interested","Unqualified","Qualified"];
+async function loadAdmin(){
+  let d;try{d=await api("/api/admin/team");}catch(e){toast("Team data load fail: "+e.message);return;}
+  renderTeam(d.team);
+  renderTeamBarChart(d.team);
+  let r;try{r=await api("/api/admin/rules");}catch(e){return;}
+  RULES_CACHE=r;
+  renderRulesUI(r);
+  try{const sch=await api("/api/admin/schedule");renderSchedule(sch.items);}catch(e){}
+  try{const lg=await api("/api/admin/log");renderLog(lg.items);}catch(e){}
+  if(!document.getElementById("ssFrom").value){
+    const now=new Date();
+    document.getElementById("ssFrom").value=new Date(now.getFullYear(),now.getMonth(),1).toISOString().slice(0,10);
+    document.getElementById("ssTo").value=now.toISOString().slice(0,10);
+  }
+  loadSalesSummary();
+}
+async function loadSalesSummary(){
+  const from=document.getElementById("ssFrom").value,to=document.getElementById("ssTo").value;
+  let d;try{d=await api("/api/admin/sales-summary?from="+encodeURIComponent(from)+"&to="+encodeURIComponent(to));}catch(e){toast("Sales summary load fail: "+e.message);return;}
+  renderSalesSummary(d);
+}
+function money(n){return "$"+Number(n||0).toLocaleString("en-US");}
+function renderSalesSummary(d){
+  document.getElementById("ssTotals").innerHTML=`
+    <div><div style="font-size:22px;font-weight:800">${d.count}</div><div style="font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Sales</div></div>
+    <div><div style="font-size:22px;font-weight:800">${money(d.total_amount)}</div><div style="font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Total amount</div></div>
+    <div><div style="font-size:22px;font-weight:800">${money(d.count?d.total_amount/d.count:0)}</div><div style="font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Avg. per sale</div></div>`;
+  document.getElementById("ssRepRows").innerHTML=d.by_rep.length?d.by_rep.map(r=>`
+    <tr><td><b>${esc(r.name)}</b></td><td>${r.count}</td><td>${money(r.total)}</td></tr>`).join(""):
+    '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:16px">No sales recorded in this range</td></tr>';
+  document.getElementById("ssBrandRows").innerHTML=d.by_brand.length?d.by_brand.map(b=>`
+    <tr><td><span class="brand-tag ${b.brand==='Acme Pro'?'bt-b':'bt-a'}">${esc(b.brand)}</span></td><td>${b.count}</td><td>${money(b.total)}</td></tr>`).join(""):
+    '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:16px">—</td></tr>';
+}
+function renderTeam(team){
+  document.getElementById("teamRows").innerHTML=team.map(t=>{
+    const outcomes=Object.entries(t.today_outcomes||{}).map(([k,v])=>`${esc(k)}: ${v}`).join(", ")||"—";
+    return `<tr>
+      <td><b>${esc(t.name)}</b>${t.admin?' <span class="badge-admin">Admin</span>':''}<div style="font-size:11.5px;color:var(--muted)">${esc(t.email)}</div></td>
+      <td>${t.total}</td><td>${t.open}</td><td>${t.calls_today}</td>
+      <td>${t.target!=null?esc(String(t.target)):'—'}</td>
+      <td style="font-size:12.5px">${outcomes}</td>
+      <td>${t.avg_contact_days!=null?t.avg_contact_days+'d':'—'}</td>
+      <td><button class="btn btn-ghost" style="padding:6px 10px;font-size:12px;white-space:nowrap" onclick="openReassign(${jsq(t.email)},${jsq(t.name)},${Number(t.open)||0})">Reassign</button></td>
+    </tr>`;
+  }).join("")||'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">No sales reps found</td></tr>';
+}
+function renderTeamBarChart(team){
+  const svg=document.getElementById("teamBarSvg");
+  const W=900,H=160,padL=8,padR=8,padT=10,padB=24;
+  const innerW=W-padL-padR,innerH=H-padT-padB;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  if(!team||!team.length){svg.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="var(--muted)" font-size="13">No reps</text>`;return;}
+  const maxV=Math.max(1,...team.map(t=>t.total));
+  const n=team.length,gap=16,bw=(innerW-gap*(n-1))/n;
+  const y=v=>padT+innerH-(v/maxV*innerH);
+  let bars="",labels="";
+  team.forEach((t,i)=>{
+    const bx=padL+i*(bw+gap),by=y(t.total),bh=(padT+innerH)-by;
+    bars+=`<rect x="${bx}" y="${by}" width="${bw}" height="${Math.max(bh,1)}" rx="4" fill="var(--accent)"/>
+           <text x="${bx+bw/2}" y="${by-6}" text-anchor="middle" font-size="11" fill="var(--ink)">${t.total}</text>`;
+    labels+=`<text x="${bx+bw/2}" y="${H-8}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${esc(t.name)}</text>`;
+  });
+  svg.innerHTML=bars+labels;
+}
+function renderSchedule(items){
+  const pending=(items||[]).filter(i=>i.status==="pending");
+  const users=(RULES_CACHE&&RULES_CACHE.sales_users)||[];
+  const nm=e=>{const u=users.find(x=>x.email===e);return u?u.name:e;};
+  document.getElementById("scheduleRows").innerHTML=pending.length?pending.map(i=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-2)">
+      <span>Apply on <b>${esc(i.date)}</b>: ${esc(nm(i.from_email))} &rarr; ${esc(nm(i.to_email))}${(i.from_date||i.to_date)?` (created ${esc(i.from_date||'…')} to ${esc(i.to_date||'…')})`:''}${i.open_only?' · open only':''}</span>
+      <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px;white-space:nowrap" onclick="cancelSchedule('${i.id}')">Cancel</button>
+    </div>`).join(""):'<p style="color:var(--muted);margin:0">No scheduled reassignments</p>';
+}
+async function cancelSchedule(id){
+  try{await api("/api/admin/schedule/cancel",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});toast("Cancelled");loadAdmin();}catch(e){toast("Failed: "+e.message);}
+}
+function renderLog(items){
+  const users=(RULES_CACHE&&RULES_CACHE.sales_users)||[];
+  const nm=e=>{const u=users.find(x=>x.email===e);return u?u.name:(e||'?');};
+  document.getElementById("logRows").innerHTML=(items||[]).length?items.map(i=>`
+    <div style="padding:7px 0;border-bottom:1px solid var(--line-2)">
+      <b>${i.count}</b> lead(s) ${esc(nm(i.from_email))} &rarr; ${esc(nm(i.to_email))} <span style="color:var(--muted)">(${esc(i.kind)}${i.filter_desc?', '+esc(i.filter_desc):''})</span>
+      <div style="font-size:11.5px;color:var(--muted)">${esc(i.ts)} · ${esc(nm(i.by))}</div>
+    </div>`).join(""):'<p style="color:var(--muted);margin:0">No reassignment history yet</p>';
+}
+async function addUser(){
+  const name=document.getElementById("auName").value.trim();
+  const email=document.getElementById("auEmail").value.trim();
+  const password=document.getElementById("auPassword").value.trim();
+  if(!name||!email||!password){toast("Fill in name, email and password");return;}
+  try{
+    await api("/api/admin/users",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,password})});
+    toast(`${name} added (Sales User)`);
+    document.getElementById("auName").value="";document.getElementById("auEmail").value="";document.getElementById("auPassword").value="";
+    loadAdmin();
+  }catch(e){toast("Failed: "+e.message);}
+}
+function openReassign(fromEmail,fromName,openCount){
+  REASSIGN_FROM=fromEmail;REASSIGN_PREVIEW_IDS=null;
+  document.getElementById("reassignTitle").textContent=`Reassign ${fromName}'s leads`;
+  document.getElementById("reassignInfo").textContent=`${fromName} currently has ${openCount} open lead(s).`;
+  const others=(RULES_CACHE&&RULES_CACHE.sales_users||[]).filter(u=>u.email!==fromEmail);
+  document.getElementById("reassignTo").innerHTML=others.map(u=>`<option value="${esc(u.email)}">${esc(u.name)}</option>`).join("")||'<option value="">No other rep available</option>';
+  document.getElementById("reassignScope").value="all";
+  document.getElementById("reassignRangeBox").classList.add("hide");
+  document.getElementById("reassignSingleBox").classList.add("hide");
+  document.getElementById("reassignOpenOnly").checked=true;
+  document.getElementById("reassignPreview").textContent="";
+  document.querySelector('input[name=reassignWhen][value=now]').checked=true;
+  document.getElementById("reassignScheduleBox").classList.add("hide");
+  document.getElementById("reassignPreviewBtn").textContent="Preview";
+  document.getElementById("reassignPreviewBtn").classList.remove("hide");
+  document.getElementById("reassignConfirmBtn").classList.add("hide");
+  document.getElementById("reassignScrim").classList.add("show");
+}
+function closeReassign(e){if(e&&e.target!==document.getElementById("reassignScrim"))return;document.getElementById("reassignScrim").classList.remove("show");}
+function onScopeChange(){
+  const v=document.getElementById("reassignScope").value;
+  document.getElementById("reassignRangeBox").classList.toggle("hide",v!=="range");
+  document.getElementById("reassignSingleBox").classList.toggle("hide",v!=="single");
+  document.getElementById("reassignPreviewBtn").classList.remove("hide");
+  document.getElementById("reassignConfirmBtn").classList.add("hide");
+  document.getElementById("reassignPreview").textContent="";
+  REASSIGN_PREVIEW_IDS=null;
+}
+function onWhenChange(){
+  const later=document.querySelector('input[name=reassignWhen]:checked').value==="later";
+  document.getElementById("reassignScheduleBox").classList.toggle("hide",!later);
+  if(later){
+    document.getElementById("reassignPreviewBtn").classList.add("hide");
+    document.getElementById("reassignConfirmBtn").classList.remove("hide");
+    document.getElementById("reassignConfirmBtn").textContent="Schedule";
+    document.getElementById("reassignPreview").textContent="This will apply on a future date — a live count can't be shown now, since new leads may still arrive before then.";
+  }else{
+    document.getElementById("reassignPreviewBtn").classList.remove("hide");
+    document.getElementById("reassignConfirmBtn").classList.add("hide");
+    document.getElementById("reassignConfirmBtn").textContent="Confirm";
+    document.getElementById("reassignPreview").textContent="";
+    REASSIGN_PREVIEW_IDS=null;
+  }
+}
+function reassignDateRange(){
+  const scope=document.getElementById("reassignScope").value;
+  const today=new Date(),iso=d=>d.toISOString().slice(0,10);
+  if(scope==="today")return{from:iso(today),to:iso(today)};
+  if(scope==="7d"){const f=new Date(today);f.setDate(f.getDate()-6);return{from:iso(f),to:iso(today)};}
+  if(scope==="30d"){const f=new Date(today);f.setDate(f.getDate()-29);return{from:iso(f),to:iso(today)};}
+  if(scope==="6m"){const f=new Date(today);f.setMonth(f.getMonth()-6);f.setDate(f.getDate()+1);return{from:iso(f),to:iso(today)};}
+  if(scope==="range")return{from:document.getElementById("reassignFrom").value,to:document.getElementById("reassignToDate").value};
+  if(scope==="single"){const d=document.getElementById("reassignSingleDate").value;return{from:d,to:d};}
+  return{from:"",to:""};
+}
+async function previewReassign(){
+  const scope=document.getElementById("reassignScope").value;
+  const {from,to}=reassignDateRange();
+  if((scope==="range"&&(!from||!to))||(scope==="single"&&!from)){toast("Select a date");return;}
+  const openOnly=document.getElementById("reassignOpenOnly").checked;
+  try{
+    let url=`/api/leads?owner=${encodeURIComponent(REASSIGN_FROM)}&limit=2000`;
+    if(from)url+=`&from_date=${from}`;
+    if(to)url+=`&to_date=${to}`;
+    const d=await api(url);
+    let leads=d.leads||[];
+    if(openOnly)leads=leads.filter(l=>!DEAD_END.includes(l.status));
+    REASSIGN_PREVIEW_IDS=leads.map(l=>l.id);
+    document.getElementById("reassignPreview").innerHTML=REASSIGN_PREVIEW_IDS.length
+      ?`<b style="color:var(--accent)">${REASSIGN_PREVIEW_IDS.length} lead(s)</b> match this filter — clicking "Confirm" will move all of them to the new owner.`
+      :`No leads match this filter.`;
+    document.getElementById("reassignPreviewBtn").classList.add("hide");
+    document.getElementById("reassignConfirmBtn").classList.remove("hide");
+  }catch(e){toast("Preview fail: "+e.message);}
+}
+async function confirmReassign(){
+  const to=document.getElementById("reassignTo").value;
+  if(!to){toast("Select a rep");return;}
+  const later=document.querySelector('input[name=reassignWhen]:checked').value==="later";
+  const openOnly=document.getElementById("reassignOpenOnly").checked;
+  const scope=document.getElementById("reassignScope").value;
+  const {from,to:fTo}=reassignDateRange();
+  if(later){
+    const schedDate=document.getElementById("reassignScheduleDate").value;
+    if(!schedDate){toast("Select a schedule date");return;}
+    try{
+      await api("/api/admin/schedule",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({date:schedDate,from_email:REASSIGN_FROM,to_email:to,from_date:from,to_date:fTo,open_only:openOnly})});
+      toast("Reassignment scheduled");
+      closeReassign();loadAdmin();
+    }catch(e){toast("Failed: "+e.message);}
+    return;
+  }
+  if(!REASSIGN_PREVIEW_IDS){toast("Click Preview first");return;}
+  if(!REASSIGN_PREVIEW_IDS.length){toast("No leads matched");closeReassign();return;}
+  const scopeLabel={all:"all time",today:"today",'7d':"last 7 days",'30d':"last 30 days",'6m':"last 6 months",range:`${from} to ${fTo}`,single:from}[scope]||scope;
+  const filterDesc=`${scopeLabel}${openOnly?", open only":""}`;
+  try{
+    const r=await api("/api/admin/reassign",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({lead_ids:REASSIGN_PREVIEW_IDS,owner:to,from_email:REASSIGN_FROM,filter_desc:filterDesc})});
+    toast(`${r.reassigned} lead(s) reassigned`);
+    closeReassign();loadAdmin();
+  }catch(e){toast("Failed: "+e.message);}
+}
+function renderRulesUI(r){
+  const users=r.sales_users||[];
+  document.getElementById("activeUsersBox").innerHTML=users.map(u=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13.5px">
+      <input type="checkbox" class="active-user-cb" value="${esc(u.email)}" ${(r.active_users||[]).includes(u.email)?'checked':''}>
+      ${esc(u.name)} <span style="color:var(--muted);font-size:12px">${esc(u.email)}</span>
+    </label>`).join("")||'<p style="color:var(--muted);font-size:13px">No sales reps found — create a sales user first.</p>';
+  document.getElementById("sourceRulesBox").innerHTML="";
+  const entries=Object.entries(r.source_rules||{});
+  if(entries.length)entries.forEach(([s,e])=>addSourceRuleRow(s,e));else addSourceRuleRow();
+  document.getElementById("targetsBox").innerHTML=users.map(u=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:5px 0">
+      <span style="min-width:170px;font-size:13px">${esc(u.name)}</span>
+      <input type="number" min="0" class="target-input" data-email="${esc(u.email)}" value="${(r.daily_targets||{})[u.email]??''}" placeholder="e.g. 20" style="width:100px">
+    </div>`).join("");
+}
+function addSourceRuleRow(src,em){
+  const sources=(RULES_CACHE&&RULES_CACHE.sources)||[];
+  const users=(RULES_CACHE&&RULES_CACHE.sales_users)||[];
+  const row=document.createElement("div");
+  row.className="source-rule-row";
+  row.innerHTML=`
+    <select class="sr-source">${["",...sources].map(s=>`<option value="${esc(s)}" ${s===src?'selected':''}>${s?esc(s):'-- Source --'}</option>`).join("")}</select>
+    <span style="color:var(--muted)">&rarr;</span>
+    <select class="sr-user">${["",...users.map(u=>u.email)].map(e=>{const u=users.find(x=>x.email===e);return `<option value="${esc(e)}" ${e===em?'selected':''}>${e?esc(u?u.name:e):'-- Rep --'}</option>`;}).join("")}</select>
+    <button class="btn btn-ghost" style="padding:6px 10px" onclick="this.parentElement.remove()">${xSvg()}</button>`;
+  document.getElementById("sourceRulesBox").appendChild(row);
+}
+async function saveRules(){
+  const active=[...document.querySelectorAll(".active-user-cb:checked")].map(c=>c.value);
+  const source_rules={};
+  document.querySelectorAll(".source-rule-row").forEach(row=>{
+    const s=row.querySelector(".sr-source").value,u=row.querySelector(".sr-user").value;
+    if(s&&u)source_rules[s]=u;
+  });
+  const daily_targets={};
+  document.querySelectorAll(".target-input").forEach(inp=>{if(inp.value)daily_targets[inp.dataset.email]=inp.value;});
+  try{
+    await api("/api/admin/rules",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({active_users:active,source_rules,daily_targets})});
+    toast("Rules saved");
+    loadAdmin();
+  }catch(e){toast("Failed: "+e.message);}
+}
+
+/* ---- sales report pages ---- */
+const SR_VIEWS=["dashboard","leads","detail","admin","salesreport","salesmonth","marketing"];
+const SR_MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let srYear=new Date().getFullYear();
+function srShow(v){SR_VIEWS.forEach(k=>document.getElementById("view-"+k).classList.toggle("hide",k!==v));window.scrollTo(0,0);if(window.innerWidth<=920)document.getElementById("app").classList.remove("nav-open");return false;}
+function openSalesReport(ev){if(ev){ev.stopPropagation();ev.preventDefault();}srShow("salesreport");loadSalesReport();return false;}
+function srSetYear(y){srYear=parseInt(y,10);loadSalesReport();}
+const srDate=iso=>{const a=(iso||"").split("-");return a.length===3?`${parseInt(a[2],10)} ${SR_MON[parseInt(a[1],10)-1]} ${a[0]}`:iso;};
+const srItems=items=>items&&items.length?items.map(it=>`<div class="sr-item">${esc(it.product)} <span class="sr-q">&times; ${it.qty}</span>${it.price?` <span class="sr-p">@ ${money(it.price)}</span>`:""}</div>`).join(""):'<span style="color:var(--muted)">&mdash;</span>';
+const SR_CHEV='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 6 6 6-6 6"/></svg>';
+const SR_ICO_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13l4 5M12 13l-4 5"/></svg>';
+const SR_ICO_P='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h2.5a1.5 1.5 0 0 1 0 3H9v3"/></svg>';
+function srExportBtns(qs){return `<a class="btn" href="/api/sales-report/export?format=xlsx&${qs}" download>${SR_ICO_X} Excel</a><a class="btn" href="/api/sales-report/export?format=pdf&${qs}" download>${SR_ICO_P} PDF</a>`;}
+async function loadSalesReport(){
+  const box=document.getElementById("srBody");
+  box.innerHTML='<div class="card" style="padding:24px;color:var(--muted)">Loading…</div>';
+  let d;try{d=await api("/api/sales-report?year="+srYear);}catch(e){return;}
+  const all=d.scope==="all";
+  const years=[];for(let y=d.current_year;y>=d.current_year-4;y--)years.push(y);
+  if(!years.includes(d.year))years.push(d.year);
+  document.getElementById("srYearSel").innerHTML=years.map(y=>`<option value="${y}"${y===d.year?" selected":""}>${y}</option>`).join("");
+  document.getElementById("srExport").innerHTML=srExportBtns("year="+d.year);
+  document.getElementById("srSub").textContent=(all?"All sales persons":"Your sales")+" · month-wise sales for "+d.year+" · click a month for the full detail";
+  const blocks=(d.team?[d.team]:[]).concat(d.reps);
+  let pend=null;try{pend=await api("/api/pending-balances");}catch(e){}
+  let h=pend?pendingCardHtml(pend,all):"";
+  h+=`<div class="sr-note">Sales tracking started on ${srDate(d.data_from)}. Months before that have no data.</div>`;
+  if(!d.has_any)h+=`<div class="card sr-empty"><b>No sales data for this year</b><span>No converted sales with purchase details were found for ${d.year}.</span></div>`;
+  h+=blocks.map(b=>srCard(b,d.year)).join("");
+  box.innerHTML=h;
+}
+function pendingCardHtml(p,all){
+  if(!p.count)return `<div class="card sr-mini"><label class="ml" style="margin-top:0">Pending balances</label><div style="color:var(--muted);font-size:13px">No pending balance. Every recorded sale is paid in full. ✓</div></div>`;
+  const rows=p.rows.map(r=>`<tr class="sr-click" onclick="openLead('${esc(r.lead_id)}')"><td><b>${esc(r.client)}</b>${r.phone?`<div class="sr-sub">${esc(r.phone)}</div>`:""}</td>${all?`<td>${esc(r.owner_name)}</td>`:""}<td style="white-space:nowrap">${srDate(r.buying_date)}<div class="sr-sub">${r.days} day${r.days===1?"":"s"} ago</div></td><td class="sr-r">${money2(r.total)}</td><td class="sr-r">${money2(r.received)}</td><td class="sr-r"><b>${money2(r.balance)}</b></td><td>${payPill(r.status)}</td></tr>`).join("");
+  return `<div class="card sr-card"><div class="sr-card-head"><div class="sr-who"><div><b>Pending balances: ${money2(p.balance)}</b><span>${p.count} sale${p.count===1?"":"s"} with money still to collect${all?" (all sales persons)":""}. Click a row to open the lead and add the payment.</span></div></div></div><div style="overflow-x:auto"><table class="sr-table sr-sales"><thead><tr><th>Client</th>${all?"<th>Sales person</th>":""}<th>Bought on</th><th class="sr-r">Total</th><th class="sr-r">Received</th><th class="sr-r">Balance</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+let srUid=0;
+const SR_ICO_MIN='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>';
+function srToggle(tr){
+  const open=tr.classList.toggle("open");
+  tr.setAttribute("aria-expanded",open?"true":"false");
+  document.querySelectorAll('tr.sr-sub[data-g="'+tr.dataset.g+'"]').forEach(r=>r.classList.toggle("hide",!open));
+}
+function srCard(b,year){
+  const yt=b.year_total,own=b.owner||"";
+  const months=b.months.filter(m=>!m.future);               // future months are never shown
+  const noDataRow=(m,sub,g)=>`<tr class="sr-none${sub?" sr-sub hide":""}"${g?` data-g="${g}"`:""}><td>${m.label}</td><td colspan="6">No data for this month</td></tr>`;
+  const dataRow=m=>`<tr class="sr-click${m.has_data?"":" sr-zero"}" data-o="${esc(own)}" onclick="openSalesMonth(${year},${m.month},this.dataset.o)"><td><b>${m.label}</b></td><td>${m.count}</td><td>${m.converted}</td><td>${money(Math.round(m.total))}</td><td>${money(Math.round(m.advance))}</td><td>${money(Math.round(m.balance))}</td><td class="sr-go">${SR_CHEV}</td></tr>`;
+  let rows="",i=0;
+  while(i<months.length){
+    const m=months[i];
+    if(m.has_data||m.current){rows+=dataRow(m);i++;continue;}
+    let j=i;while(j<months.length&&!months[j].has_data&&!months[j].current)j++;
+    const run=months.slice(i,j);
+    if(run.length<2){rows+=noDataRow(run[0],false);}
+    else{                                                    // 2+ empty months in a row -> one collapsible group
+      const g="g"+(++srUid);
+      rows+=`<tr class="sr-group" data-g="${g}" role="button" tabindex="0" aria-expanded="false" title="Click to show or hide these months" onclick="srToggle(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();srToggle(this)}"><td colspan="7"><span class="sr-gico">${SR_ICO_MIN}</span><b>${run[0].label} &ndash; ${run[run.length-1].label}</b><span class="sr-gtxt">${run.length} months &middot; No data</span></td></tr>`;
+      rows+=run.map(r=>noDataRow(r,true,g)).join("");
+    }
+    i=j;
+  }
+  return `<div class="card sr-card"><div class="sr-card-head"><div class="sr-who"><span class="sr-av">${esc((b.name||"?").charAt(0).toUpperCase())}</span><div><b>${esc(b.name)}</b><span>${year}</span></div></div><div class="sr-yt"><div><b>${yt.count}</b><span>Sales</span></div><div><b>${yt.converted}</b><span>Converted</span></div><div><b>${money(Math.round(yt.total))}</b><span>Total</span></div><div><b>${money(Math.round(yt.advance))}</b><span>Received</span></div><div><b>${money(Math.round(yt.balance))}</b><span>Balance due</span></div></div></div><div style="overflow-x:auto"><table class="sr-table sr-ym"><colgroup><col style="width:17%"><col style="width:9%"><col style="width:15%"><col style="width:20%"><col style="width:17%"><col style="width:17%"><col style="width:5%"></colgroup><thead><tr><th>Month</th><th>Sales</th><th>People converted</th><th>Total amount</th><th>Received</th><th>Balance due</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+let srMonthCtx=null;
+async function openSalesMonth(y,m,owner){
+  owner=owner||"";srMonthCtx={y,m,o:owner};
+  srShow("salesmonth");
+  const box=document.getElementById("smBody");
+  box.innerHTML='<div class="card" style="padding:24px;color:var(--muted)">Loading…</div>';
+  document.getElementById("smTitle").textContent="Month report";document.getElementById("smSub").textContent="";document.getElementById("smExport").innerHTML="";
+  const oq=owner?"&owner="+encodeURIComponent(owner):"";
+  let d;try{d=await api(`/api/sales-report/month?year=${y}&month=${m}${oq}`);}catch(e){return;}
+  document.getElementById("smTitle").textContent=d.rep_name+" — "+d.label;
+  document.getElementById("smSub").textContent="Full report for the month · sales are counted by buying date";
+  document.getElementById("smExport").innerHTML=srExportBtns(`year=${y}&month=${m}${oq}`);
+  let h="";
+  if(!d.count){
+    h+=`<div class="card sr-empty"><b>No data for this month</b><span>No sales with purchase details were recorded for ${esc(d.rep_name)} in ${esc(d.label)}.</span></div>`;
+    if(d.missing_details)h+=`<div class="sr-warn">${d.missing_details} converted lead${d.missing_details===1?" has":"s have"} no purchase details recorded yet.</div>`;
+    box.innerHTML=h;return;
+  }
+  h+=`<div class="kpis sr-kpis"><div class="kpi"><div class="k-lbl">Total sales</div><div class="k-num">${money(Math.round(d.total))}</div><div class="k-sub">for the month</div></div><div class="kpi"><div class="k-lbl">Number of sales</div><div class="k-num">${d.count}</div><div class="k-sub">purchases recorded</div></div><div class="kpi"><div class="k-lbl">People converted</div><div class="k-num">${d.converted}</div><div class="k-sub">unique leads won</div></div><div class="kpi"><div class="k-lbl">Average sale</div><div class="k-num">${money(Math.round(d.avg))}</div><div class="k-sub">per purchase</div></div><div class="kpi"><div class="k-lbl">Payment received</div><div class="k-num">${money(Math.round(d.advance))}</div><div class="k-sub">${d.adv_missing?d.adv_missing+" sale"+(d.adv_missing===1?"":"s")+" ("+money(Math.round(d.unknown_amount))+") have no payment recorded yet, not counted":"collected so far on all sales"}</div></div><div class="kpi"><div class="k-lbl">Balance due</div><div class="k-num">${money(Math.round(d.balance))}</div><div class="k-sub">still to collect</div></div></div>`;
+  if(d.missing_details)h+=`<div class="sr-warn">${d.missing_details} more converted lead${d.missing_details===1?" has":"s have"} no purchase details recorded yet, so ${d.missing_details===1?"it is":"they are"} not in these numbers.</div>`;
+  h+=`<div class="sr-split">`;
+  h+=`<div class="card sr-mini"><label class="ml" style="margin-top:0">By brand</label><table class="sr-table sr-t2"><thead><tr><th>Brand</th><th>Sales</th><th>Total</th><th>Received</th><th>Balance</th></tr></thead><tbody>${d.by_brand.map(b=>`<tr><td><span class="brand-tag ${b.brand==="Acme Pro"?"bt-b":"bt-a"}">${esc(b.brand)}</span></td><td>${b.count}</td><td>${money(Math.round(b.total))}</td><td>${money(Math.round(b.advance))}</td><td>${money(Math.round(b.balance))}</td></tr>`).join("")}</tbody></table></div>`;
+  if(!owner)h+=`<div class="card sr-mini"><label class="ml" style="margin-top:0">By sales person</label><table class="sr-table sr-t2"><thead><tr><th>Sales person</th><th>Sales</th><th>Total</th><th>Received</th><th>Balance</th></tr></thead><tbody>${d.by_rep.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td>${r.count}</td><td>${money(Math.round(r.total))}</td><td>${money(Math.round(r.advance))}</td><td>${money(Math.round(r.balance))}</td></tr>`).join("")}</tbody></table></div>`;
+  h+=`</div>`;
+  h+=`<div class="card sr-card"><div class="sr-card-head"><div class="sr-who"><div><b>All sales in ${esc(d.label)}</b><span>Who bought, what they bought and for how much</span></div></div></div><div style="overflow-x:auto"><table class="sr-table sr-sales"><thead><tr><th>Date</th><th>Client</th><th>Sales person</th><th>Brand</th><th>What they bought</th><th class="sr-r">Total</th><th class="sr-r">Received</th><th class="sr-r">Balance</th><th>Payment</th></tr></thead><tbody>${d.sales.map(s=>`<tr><td style="white-space:nowrap">${srDate(s.buying_date)}</td><td><b>${esc(s.client)}</b>${s.purchase_no>1?` <span class="pay-pill pp-partial" title="This client bought again">repeat #${s.purchase_no}</span>`:""}${s.phone?`<div class="sr-sub">${esc(s.phone)}</div>`:""}<div class="sr-sub">${esc(s.lead_id)}</div></td><td>${esc(s.owner_name)}</td><td><span class="brand-tag ${s.brand==="Acme Pro"?"bt-b":"bt-a"}">${esc(s.brand)}</span></td><td>${srItems(s.items)}</td><td class="sr-r"><b>${money(Math.round(s.total_amount))}</b></td><td class="sr-r">${s.advance===null||s.advance===undefined?'<span style="color:var(--muted)" title="No payment recorded">&mdash;</span>':money(Math.round(s.advance))}</td><td class="sr-r">${s.advance===null||s.advance===undefined?'<span style="color:var(--muted)" title="No payment recorded">&mdash;</span>':money(Math.round(s.balance))}</td><td>${payPill(s.pay_status)}</td></tr>`).join("")}</tbody><tfoot><tr><td colspan="5" class="sr-r"><b>Month total</b></td><td class="sr-r"><b>${money(Math.round(d.total))}</b></td><td class="sr-r"><b>${money(Math.round(d.advance))}</b></td><td class="sr-r"><b>${money(Math.round(d.balance))}</b></td><td></td></tr></tfoot></table></div></div>`;
+  box.innerHTML=h;
+}
+
+
+/* ---- Marketing dashboard — admin only ---- */
+const mkIso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function mkRange(){
+  const v=document.getElementById("mkPeriod").value,t=new Date(),back=n=>{const d=new Date(t);d.setDate(d.getDate()-n);return mkIso(d);};
+  if(v==="7d")return[back(6),mkIso(t)];
+  if(v==="30d")return[back(29),mkIso(t)];
+  if(v==="month")return[mkIso(new Date(t.getFullYear(),t.getMonth(),1)),mkIso(t)];
+  if(v==="lastmonth")return[mkIso(new Date(t.getFullYear(),t.getMonth()-1,1)),mkIso(new Date(t.getFullYear(),t.getMonth(),0))];
+  if(v==="custom")return[document.getElementById("mkFrom").value,document.getElementById("mkTo").value];
+  return["",""];
+}
+function mkSetPeriod(v){document.getElementById("mkCustom").classList.toggle("hide",v!=="custom");loadMarketing();}
+const mkPct=n=>(Math.round(n*10)/10)+"%";
+function mkBar(c){
+  const t=c.total||1,seg=(n,cls)=>n?`<i class="${cls}" style="width:${100*n/t}%" title="${n}"></i>`:"";
+  return `<div class="mk-bar">${seg(c.converted,"b-won")}${seg(c.interested,"b-int")}${seg(c.pending,"b-pen")}${seg(c.not_interested,"b-not")}${seg(c.junk,"b-junk")}</div>`;
+}
+async function loadMarketing(){
+  const box=document.getElementById("mkBody");
+  const [f,t]=mkRange(),br=document.getElementById("mkBrand").value;
+  box.innerHTML='<div class="card" style="padding:24px;color:var(--muted)">Loading…</div>';
+  let d;try{d=await api("/api/marketing?from="+f+"&to="+t+"&brand="+encodeURIComponent(br));}catch(e){box.innerHTML='<div class="card" style="padding:24px;color:var(--bad)">Could not load: '+esc(e.message)+'</div>';return;}
+  const T=d.totals;
+  document.getElementById("mkSub").textContent=(f||t?`${f||"start"} to ${t||"today"}`:"All time")+" · "+(br||"both brands")+" · based on the “Where did you hear about us?” answer on the website forms";
+  let h="";
+  if(d.answered===0){
+    h+=`<div class="sr-warn">No lead has a “Heard about us” answer yet in this period. Answers appear as new leads come in from the web forms. Chat and manually added leads are never asked.</div>`;
+  }
+  h+=`<div class="kpis"><div class="kpi"><div class="k-lbl">Leads in period</div><div class="k-num">${T.total}</div><div class="k-sub">${d.answered} answered the question (${mkPct(d.answered_pct)})</div></div>
+   <div class="kpi"><div class="k-lbl">Valid leads</div><div class="k-num" style="color:var(--good)">${T.valid}</div><div class="k-sub">not marked Junk</div></div>
+   <div class="kpi"><div class="k-lbl">Junk</div><div class="k-num" style="color:var(--bad)">${T.junk}</div><div class="k-sub">${mkPct(T.junk_pct)} of all leads</div></div>
+   <div class="kpi"><div class="k-lbl">Sales won</div><div class="k-num">${T.converted}</div><div class="k-sub">${T.sales?money(T.sales)+" revenue":"no purchase value recorded"}</div></div></div>`;
+  if(d.best||d.worst){
+    h+=`<div class="card mk-insight">${d.best?`<div><span>Best quality channel</span><b style="color:var(--good)">${esc(d.best)}</b><em>highest interested + sold share</em></div>`:""}${d.worst?`<div><span>Most junk</span><b style="color:var(--bad)">${esc(d.worst)}</b><em>highest junk share</em></div>`:""}<small>Only channels with at least 3 judged leads are compared.</small></div>`;
+  }
+  const rows=d.channels.map(c=>{
+    const zero=!c.total;
+    return `<tr class="${zero?"sr-zero":""}"><td data-l="Channel"><b>${esc(c.channel)}</b></td><td data-l="Leads">${c.total}</td><td data-l="Valid">${c.valid}</td><td data-l="Junk" class="m-bad"><span>${c.junk}${c.total?` <small>${mkPct(c.junk_pct)}</small>`:""}</span></td><td data-l="Interested" class="m-good">${c.interested}</td><td data-l="Not interested">${c.not_interested}</td><td data-l="Sold" class="m-good">${c.converted}</td><td data-l="Pending">${c.pending}</td><td data-l="Interest rate">${c.total?mkPct(c.interest_pct):"—"}</td><td data-l="Revenue">${c.sales?money(c.sales):"—"}</td><td data-l="Mix" class="mk-mix">${c.total?mkBar(c):""}</td></tr>`;
+  }).join("");
+  h+=`<div class="card sr-card"><div class="sr-card-head"><div class="sr-who"><span><b>Channel performance</b><span>Leads grouped by where they said they heard about us</span></span></div></div>
+   <div style="overflow-x:auto"><table class="sr-table mk-table"><thead><tr><th>Channel</th><th>Leads</th><th>Valid</th><th>Junk</th><th>Interested</th><th>Not interested</th><th>Sold</th><th>Pending</th><th>Interest rate</th><th>Revenue</th><th>Mix</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <div class="mk-legend"><span><i class="b-won"></i>Sold</span><span><i class="b-int"></i>Interested / Follow-up</span><span><i class="b-pen"></i>Pending (New, Contacted, Not available)</span><span><i class="b-not"></i>Not interested</span><span><i class="b-junk"></i>Junk</span></div>
+   <p class="sr-note" style="padding:0 18px 14px;margin:0">Valid = all leads not marked Junk. Interest rate = (Interested + Sold) out of leads the team has already judged (everything except Pending). “Not specified” = AI chat, manual leads, older leads and visitors who skipped the question.</p></div>`;
+  if(d.reps.length){
+    const rr=d.reps.map(r=>`<tr><td data-l="Sales person"><b>${esc(r.name)}</b></td><td data-l="Leads">${r.total}</td><td data-l="Valid">${r.valid}</td><td data-l="Junk" class="m-bad">${r.junk}</td><td data-l="Interested" class="m-good">${r.interested}</td><td data-l="Not interested">${r.not_interested}</td><td data-l="Sold" class="m-good">${r.converted}</td><td data-l="Pending">${r.pending}</td></tr>`).join("");
+    h+=`<div class="card sr-card"><div class="sr-card-head"><div class="sr-who"><span><b>What each sales person decided</b><span>Only leads that answered the question${d.answers_since?` (first answer ${srDate(d.answers_since)})`:""}</span></span></div></div>
+     <div style="overflow-x:auto"><table class="sr-table mk-table"><thead><tr><th>Sales person</th><th>Leads</th><th>Valid</th><th>Junk</th><th>Interested</th><th>Not interested</th><th>Sold</th><th>Pending</th></tr></thead><tbody>${rr}</tbody></table></div></div>`;
+  }
+  if(d.others.length){
+    h+=`<div class="card sr-card"><div class="sr-card-head"><div class="sr-who"><span><b>“Others” — what people typed</b><span>Look here for new channels worth adding to the dropdown</span></span></div></div>
+     <div class="mk-others">${d.others.map(o=>`<span class="mk-tag">${esc(o.text)}<b>${o.count}</b></span>`).join("")}</div></div>`;
+  }
+  box.innerHTML=h;
+}
+
+/* ---- nav / misc ---- */
+let lastNavEl=null;
+function go(v,el,preset){
+  ["dashboard","leads","detail","admin","salesreport","salesmonth","marketing"].forEach(k=>document.getElementById("view-"+k).classList.toggle("hide",k!==v));
+  if(el){document.querySelectorAll("#nav a").forEach(a=>a.classList.remove("active"));el.classList.add("active");lastNavEl=el;}
+  if(v==="dashboard")loadDashboard();
+  if(v==="admin")loadAdmin();
+  if(v==="marketing")loadMarketing();
+  if(v==="leads"){
+    filter=preset||"all";srcFilter="all";brandFilter="all";curPage=1;
+    buildDeadEndMenu();
+    buildSourceChips();
+    document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.f===filter));
+    document.getElementById("todayBanner").classList.toggle("hide",filter!=="today");
+    loadLeads();
+  }
+  window.scrollTo(0,0);if(window.innerWidth<=920)document.getElementById("app").classList.remove("nav-open");return false;
+}
+// "Back to Leads" from a lead's detail page — unlike go('leads',...), this must
+// NOT reset the status/source filter or scroll position, so sales team doesn't
+// lose their place in a long/filtered list every time they open a lead.
+function backToLeads(){
+  ["dashboard","leads","detail","salesreport","salesmonth","marketing"].forEach(k=>document.getElementById("view-"+k).classList.toggle("hide",k!=="leads"));
+  // restore whichever ONE nav link was actually active before (Leads / Today's
+  // Calls / Follow-ups all share data-nav="leads", so matching by that attribute
+  // wrongly lit up all three — must restore the exact element instead).
+  document.querySelectorAll("#nav a").forEach(a=>a.classList.remove("active"));
+  if(lastNavEl)lastNavEl.classList.add("active");
+  if(!document.getElementById("rows").children.length)loadLeads();
+  window.scrollTo(0,leadsScrollY);
+  if(window.innerWidth<=920)document.getElementById("app").classList.remove("nav-open");
+}
+function toggleNav(){document.getElementById("app").classList.toggle("nav-open");}
+function doSearch(){go('leads',document.querySelector('[data-nav=leads]'));loadLeads();}
+async function refreshAll(b){b.firstElementChild.style.transition="transform .6s";b.firstElementChild.style.transform="rotate(360deg)";setTimeout(()=>{b.firstElementChild.style.transition="";b.firstElementChild.style.transform="";},650);if(!document.getElementById("view-leads").classList.contains("hide"))loadLeads();else if(!document.getElementById("view-marketing").classList.contains("hide"))loadMarketing();else if(!document.getElementById("view-salesreport").classList.contains("hide"))loadSalesReport();else if(!document.getElementById("view-salesmonth").classList.contains("hide")&&srMonthCtx)openSalesMonth(srMonthCtx.y,srMonthCtx.m,srMonthCtx.o);else loadDashboard();}
+let toastT;function toast(m){let t=document.getElementById("toast");if(!t){t=document.createElement("div");t.id="toast";t.className="toast";document.body.appendChild(t);}t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200);}
+document.getElementById("tabs").addEventListener("click",e=>{const t=e.target.closest(".tab");if(!t||!t.dataset.f)return;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");filter=t.dataset.f;srcFilter="all";brandFilter="all";curPage=1;document.getElementById("todayBanner").classList.add("hide");buildDeadEndMenu();buildSourceChips();loadLeads();});
+boot();
+</script>
+<!--/SCRIPT-->
