@@ -1,0 +1,20 @@
+# Render Blueprint: free web service. Runs the built-in SQLite demo (data resets when the instance restarts).
+services:
+  - type: web
+    name: acme-lead-crm
+    runtime: python
+    plan: free
+    buildCommand: python3 build.py
+    startCommand: python3 app.py
+    healthCheckPath: /
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: DEMO_MODE
+        value: "1"
+      - key: COOKIE_SECURE
+        value: "1"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.12.3
